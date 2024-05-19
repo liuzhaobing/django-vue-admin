@@ -31,16 +31,17 @@
       <el-tab-pane label="待处理" name="duty">
         <el-table
           v-loading="listLoading"
+          v-el-height-adaptive-table="{bottomOffset: 100}"
           :data="tickets"
-          border fit stripe
+          border
+          fit
+          stripe
           style="width: 100%"
           height="100"
           highlight-current-row
-          v-el-height-adaptive-table="{bottomOffset: 100}"
         >
-          <el-table-column label="工单标题" min-width="100" prop="title">
-          </el-table-column>
-          <el-table-column label="当前状态"  min-width="100">
+          <el-table-column label="工单标题" min-width="100" prop="title" />
+          <el-table-column label="当前状态" min-width="100">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.act_state==0" label="草稿中" value="scope.row.act_state">草稿中</el-tag>
               <el-tag v-else-if="scope.row.act_state==1" label="进行中" value="scope.row.act_state">进行中</el-tag>
@@ -50,17 +51,16 @@
               <el-tag v-else-if="scope.row.act_state==5" label="已关闭" value="scope.row.act_state">已关闭</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="进行状态"  min-width="100">
+          <el-table-column label="进行状态" min-width="100">
             <template slot-scope="scope">
-              <span v-if="scope.row.state_.type==0">{{scope.row.state_.name}}中</span>
-              <span v-else>已{{scope.row.state_.name}}</span>
+              <span v-if="scope.row.state_.type==0">{{ scope.row.state_.name }}中</span>
+              <span v-else>已{{ scope.row.state_.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="类型"  min-width="100">
+          <el-table-column label="类型" min-width="100">
             <template slot-scope="scope">{{ scope.row.workflow_.name }}</template>
           </el-table-column>
-          <el-table-column label="创建时间"  min-width="100" prop="create_time">
-          </el-table-column>
+          <el-table-column label="创建时间" min-width="100" prop="create_time" />
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
               <el-link v-if="scope.row.state_.distribute_type==1&&scope.row.participant_type==2" type="danger" @click="handleGetTicket(scope)">接单</el-link>
@@ -68,7 +68,7 @@
               <el-link v-if="scope.row.state_.type==1&&userId==1" type="danger" @click="handleClose(scope,'2')">关闭</el-link>
               <!--如果state_.retreat为可退回，则显示撤回按钮 state_.type==1处于草稿状态 -->
               <el-link v-if="scope.row.state_.enable_retreat&&userId==scope.row.create_by&&scope.row.state_.type!==1" type="danger" @click="handleClose(scope,'1')">撤回</el-link>
-              <el-link  type="primary" @click="handleDetails(scope)">详情</el-link>
+              <el-link type="primary" @click="handleDetails(scope)">详情</el-link>
               <el-link type="success" @click="handleDelete(scope)">删除</el-link>
               <el-link type="success" @click="handlePicture(scope)">查看流程图</el-link>
               <el-link type="success" @click="handleLogs(scope)">工单日志</el-link>
@@ -83,15 +83,18 @@
         />
       </el-tab-pane>
       <el-tab-pane label="我处理" name="worked">
-        <el-table :data="tickets"
-                  border fit stripe
-                  style="width: 100%"
-                  height="100"
-                  highlight-current-row
-                  v-el-height-adaptive-table="{bottomOffset: 60}">
-          <el-table-column label="工单标题" min-width="100" prop="title">
-          </el-table-column>
-          <el-table-column label="当前状态"  min-width="100">
+        <el-table
+          v-el-height-adaptive-table="{bottomOffset: 60}"
+          :data="tickets"
+          border
+          fit
+          stripe
+          style="width: 100%"
+          height="100"
+          highlight-current-row
+        >
+          <el-table-column label="工单标题" min-width="100" prop="title" />
+          <el-table-column label="当前状态" min-width="100">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.act_state==0" label="草稿中" value="scope.row.act_state">草稿中</el-tag>
               <el-tag v-else-if="scope.row.act_state==1" label="进行中" value="scope.row.act_state">进行中</el-tag>
@@ -101,24 +104,23 @@
               <el-tag v-else-if="scope.row.act_state==5" label="已关闭" value="scope.row.act_state">已关闭</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="进行状态"  min-width="100">
+          <el-table-column label="进行状态" min-width="100">
             <template slot-scope="scope">
-              <span v-if="scope.row.state_.type==0">{{scope.row.state_.name}}中</span>
-              <span v-else>已{{scope.row.state_.name}}</span>
+              <span v-if="scope.row.state_.type==0">{{ scope.row.state_.name }}中</span>
+              <span v-else>已{{ scope.row.state_.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="类型"  min-width="100">
+          <el-table-column label="类型" min-width="100">
             <template slot-scope="scope">{{ scope.row.workflow_.name }}</template>
           </el-table-column>
-          <el-table-column label="创建时间"  min-width="100" prop="create_time">
-          </el-table-column>
+          <el-table-column label="创建时间" min-width="100" prop="create_time" />
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
-             <!-- <el-link v-if="scope.row.state_.distribute_type==1&&scope.row.participant_type==2" type="danger" @click="handleGetTicket(scope)">接单</el-link>
+              <!-- <el-link v-if="scope.row.state_.distribute_type==1&&scope.row.participant_type==2" type="danger" @click="handleGetTicket(scope)">接单</el-link>
               <el-link v-else-if="(scope.row.act_state==1||scope.row.act_state==3)&&scope.row.participant_type!==2&&scope.row.state_.type===0" type="primary" @click="handleDetail(scope)">处理</el-link>
               -->
               <el-link v-if="scope.row.state_.type==1&&userId==1" type="danger" @click="handleClose(scope,'2')">关闭</el-link>
-              <el-link  type="primary" @click="handleDetails(scope)">详情</el-link>
+              <el-link type="primary" @click="handleDetails(scope)">详情</el-link>
               <el-link type="success" @click="handlePicture(scope)">查看流程图</el-link>
               <el-link type="success" @click="handleLogs(scope)">工单日志</el-link>
             </template>
@@ -132,15 +134,18 @@
         />
       </el-tab-pane>
       <el-tab-pane label="我发起" name="owner">
-        <el-table :data="tickets"
-                  border fit stripe
-                  style="width: 100%"
-                  height="100"
-                  highlight-current-row
-                  v-el-height-adaptive-table="{bottomOffset: 60}">
-          <el-table-column label="工单标题" min-width="100" prop="title">
-          </el-table-column>
-          <el-table-column label="当前状态"  min-width="100">
+        <el-table
+          v-el-height-adaptive-table="{bottomOffset: 60}"
+          :data="tickets"
+          border
+          fit
+          stripe
+          style="width: 100%"
+          height="100"
+          highlight-current-row
+        >
+          <el-table-column label="工单标题" min-width="100" prop="title" />
+          <el-table-column label="当前状态" min-width="100">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.act_state==0" label="草稿中" value="scope.row.act_state">草稿中</el-tag>
               <el-tag v-else-if="scope.row.act_state==1" label="进行中" value="scope.row.act_state">进行中</el-tag>
@@ -150,22 +155,21 @@
               <el-tag v-else-if="scope.row.act_state==5" label="已关闭" value="scope.row.act_state">已关闭</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="进行状态"  min-width="100">
+          <el-table-column label="进行状态" min-width="100">
             <template slot-scope="scope">
-              <span v-if="scope.row.state_.type==0">{{scope.row.state_.name}}中</span>
-              <span v-else>已{{scope.row.state_.name}}</span>
+              <span v-if="scope.row.state_.type==0">{{ scope.row.state_.name }}中</span>
+              <span v-else>已{{ scope.row.state_.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="类型"  min-width="100">
+          <el-table-column label="类型" min-width="100">
             <template slot-scope="scope">{{ scope.row.workflow_.name }}</template>
           </el-table-column>
-          <el-table-column label="创建时间"  min-width="100" prop="create_time">
-          </el-table-column>
+          <el-table-column label="创建时间" min-width="100" prop="create_time" />
           <el-table-column align="center" label="操作">
-            <template slot-scope="scope" v-if="scope.row.state_">
+            <template v-if="scope.row.state_" slot-scope="scope">
               <el-link v-if="scope.row.state_.enable_retreat&&scope.row.state_.type!==1" type="danger" @click="handleClose(scope,'1')">撤回</el-link>
               <el-link v-if="scope.row.state_.type==1" type="danger" @click="handleClose(scope,'2')">关闭</el-link>
-              <el-link  type="primary" @click="handleDetails(scope)">详情</el-link>
+              <el-link type="primary" @click="handleDetails(scope)">详情</el-link>
               <el-link type="success" @click="handleDelete(scope)">删除</el-link>
               <el-link type="success" @click="handlePicture(scope)">查看流程图</el-link>
               <el-link type="success" @click="handleLogs(scope)">工单日志</el-link>
@@ -180,15 +184,18 @@
         />
       </el-tab-pane>
       <el-tab-pane label="抄送我" name="cc">
-        <el-table :data="tickets"
-                  border fit stripe
-                  style="width: 100%"
-                  height="100"
-                  highlight-current-row
-                  v-el-height-adaptive-table="{bottomOffset: 60}">
-          <el-table-column label="工单标题" min-width="100" prop="title">
-          </el-table-column>
-          <el-table-column label="当前状态"  min-width="100">
+        <el-table
+          v-el-height-adaptive-table="{bottomOffset: 60}"
+          :data="tickets"
+          border
+          fit
+          stripe
+          style="width: 100%"
+          height="100"
+          highlight-current-row
+        >
+          <el-table-column label="工单标题" min-width="100" prop="title" />
+          <el-table-column label="当前状态" min-width="100">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.act_state==0" label="草稿中" value="scope.row.act_state">草稿中</el-tag>
               <el-tag v-else-if="scope.row.act_state==1" label="进行中" value="scope.row.act_state">进行中</el-tag>
@@ -198,20 +205,19 @@
               <el-tag v-else-if="scope.row.act_state==5" label="已关闭" value="scope.row.act_state">已关闭</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="进行状态"  min-width="100">
+          <el-table-column label="进行状态" min-width="100">
             <template slot-scope="scope">
-              <span v-if="scope.row.state_.type==0">{{scope.row.state_.name}}中</span>
-              <span v-else>已{{scope.row.state_.name}}</span>
+              <span v-if="scope.row.state_.type==0">{{ scope.row.state_.name }}中</span>
+              <span v-else>已{{ scope.row.state_.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="类型"  min-width="100">
+          <el-table-column label="类型" min-width="100">
             <template slot-scope="scope">{{ scope.row.workflow_.name }}</template>
           </el-table-column>
-          <el-table-column label="创建时间"  min-width="100" prop="create_time">
-          </el-table-column>
+          <el-table-column label="创建时间" min-width="100" prop="create_time" />
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
-              <el-link  type="primary" @click="handleDetails(scope)">详情</el-link>
+              <el-link type="primary" @click="handleDetails(scope)">详情</el-link>
               <el-link type="danger" @click="handlePicture(scope)">查看流程图</el-link>
               <el-link type="success" @click="handleLogs(scope)">工单日志</el-link>
             </template>
@@ -225,24 +231,22 @@
         />
       </el-tab-pane>
     </el-tabs>
-    <div class="svgMark" v-if="dialogVisible" @click="closeMark">
+    <div v-if="dialogVisible" class="svgMark" @click="closeMark">
       <div class="svgWrapper">
-        <div class="svgItem">工单流程图<i class="el-dialog__close el-icon el-icon-close" @click="closeMark"></i></div>
+        <div class="svgItem">工单流程图<i class="el-dialog__close el-icon el-icon-close" @click="closeMark" /></div>
         <el-row>
           <el-col :span="12">
-            <p>工单名称 ：{{watchedName}}</p>
+            <p>工单名称 ：{{ watchedName }}</p>
           </el-col>
           <el-col :span="12">
-            <p>创建时间 ：{{watchedCreateTime}}</p>
+            <p>创建时间 ：{{ watchedCreateTime }}</p>
           </el-col>
         </el-row>
         <el-steps :active="actives" spac="400px" align-center="" style="padding-top: 20px;">
-          <el-step :title="item.name" v-for="item in flowSteps " :key="item.id">
-          </el-step>
+          <el-step v-for="item in flowSteps " :key="item.id" :title="item.name" />
         </el-steps>
         <div style="width: 90%;margin: auto;">
-          <svg height=1000 id="mySvg" style="width:100%!important;">
-          </svg>
+          <svg id="mySvg" height="1000" style="width:100%!important;" />
         </div>
 
       </div>
@@ -250,10 +254,10 @@
     <el-dialog :visible.sync="limitedRetreat" :title="handleTitle">
       <el-row>
         <el-form ref="Form" :model="handleForm" label-width="100px" label-position="right">
-          <el-col :span="1" style="height: 1px;"></el-col>
+          <el-col :span="1" style="height: 1px;" />
           <el-col :span="22" style="margin:3vh 0">
             <el-form-item :label="handleLabel">
-              <el-input type="textarea" :rows="3" v-model="handleForm.suggestion" placeholder="撤回原因"/>
+              <el-input v-model="handleForm.suggestion" type="textarea" :rows="3" placeholder="撤回原因" />
             </el-form-item>
           </el-col>
         </el-form>
@@ -278,7 +282,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item :label="item.field_name" v-for="item in customfields" :key="item.id">
+        <el-form-item v-for="item in customfields" :key="item.id" :label="item.field_name">
           <template v-if="item.field_type=='string'">
             <el-input v-model="item.default_value" :placeholder="item.description" />
           </template>
@@ -295,8 +299,7 @@
               placeholder="选择日期"
               value-format="yyyy-MM-dd"
               style="width: 100%"
-            >
-            </el-date-picker>
+            />
           </template>
           <template v-if="item.field_type==='datetime'">
             <el-date-picker
@@ -305,33 +308,30 @@
               placeholder="选择日期"
               value-format="yyyy-MM-dd HH:mm:ss"
               style="width: 100%"
-            >
-            </el-date-picker>
+            />
           </template>
           <template v-if="item.field_type==='select'">
-            <el-select style="width: 100%" v-model="item.default_value" placeholder="请选择">
+            <el-select v-model="item.default_value" style="width: 100%" placeholder="请选择">
               <el-option
                 v-for="item1 in item.field_choice"
                 :key="item1.id"
                 :label="item1.name"
                 :value="item1.id"
-              >
-              </el-option>
+              />
             </el-select>
           </template>
           <template v-if="item.field_type==='selects'">
-            <el-select  style="width: 100%" multiple v-model="item.default_value" placeholder="请选择">
+            <el-select v-model="item.default_value" style="width: 100%" multiple placeholder="请选择">
               <el-option
                 v-for="item1 in item.field_choice"
                 :key="item1.id"
                 :label="item1.name"
                 :value="item1.id"
-              >
-              </el-option>
+              />
             </el-select>
           </template>
           <template v-if="item.field_type==='textarea'">
-            <el-input type="textarea"  :rows="3" v-model="item.default_value" placeholder="内容" />
+            <el-input v-model="item.default_value" type="textarea" :rows="3" placeholder="内容" />
           </template>
           <template v-if="item.field_type==='file'">
             <el-upload
@@ -356,14 +356,18 @@
       </div>
     </el-dialog>
     <el-dialog :visible.sync="limitedFlowLogs" title="工单日志">
-      <el-table :data="floeLogs"  fit stripe
-                style="width: 100%;border-top:1px solid #EBEEF5;"
-                height="100"
-                highlight-current-row
-                v-el-height-adaptive-table="{bottomOffset: 60}">
+      <el-table
+        v-el-height-adaptive-table="{bottomOffset: 60}"
+        :data="floeLogs"
+        fit
+        stripe
+        style="width: 100%;border-top:1px solid #EBEEF5;"
+        height="100"
+        highlight-current-row
+      >
         <el-table-column label="工单标题" min-width="100">
-          <template slot-scope="scope" v-if="scope.row.ticket_data">
-            <span>{{scope.row.ticket_data.title}}中</span>
+          <template v-if="scope.row.ticket_data" slot-scope="scope">
+            <span>{{ scope.row.ticket_data.title }}中</span>
           </template>
         </el-table-column>
         <!-- <el-table-column label="当前状态"  min-width="100">
@@ -376,19 +380,17 @@
              <el-tag v-else-if="scope.row.act_state==5" label="已关闭" value="scope.row.act_state">已关闭</el-tag>
            </template>
          </el-table-column>-->
-        <el-table-column label="进行状态"  min-width="100">
-          <template slot-scope="scope" v-if="scope.row.state_">
-            <span v-if="scope.row.state_.type==0">{{scope.row.state_.name}}中</span>
-            <span v-else>已{{scope.row.state_.name}}</span>
+        <el-table-column label="进行状态" min-width="100">
+          <template v-if="scope.row.state_" slot-scope="scope">
+            <span v-if="scope.row.state_.type==0">{{ scope.row.state_.name }}中</span>
+            <span v-else>已{{ scope.row.state_.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作人"  min-width="100">
-          <template slot-scope="scope" v-if="scope.row.participant_">{{ scope.row.participant_.name }}</template>
+        <el-table-column label="操作人" min-width="100">
+          <template v-if="scope.row.participant_" slot-scope="scope">{{ scope.row.participant_.name }}</template>
         </el-table-column>
-        <el-table-column label="操作意见" min-width="100" prop="suggestion">
-        </el-table-column>
-        <el-table-column label="更新时间"  min-width="100" prop="update_time">
-        </el-table-column>
+        <el-table-column label="操作意见" min-width="100" prop="suggestion" />
+        <el-table-column label="更新时间" min-width="100" prop="update_time" />
       </el-table>
     </el-dialog>
   </div>
@@ -984,8 +986,6 @@
     margin-right: 10px;
     display: inline-block;
   }
-
-
 
   .tooltip {
     position: absolute;

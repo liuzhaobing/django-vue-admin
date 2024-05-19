@@ -3,26 +3,24 @@
     <el-card>
       <div>
         <el-input
-                v-model="listQuery.search"
-                placeholder="名称"
-                style="width: 300px"
-                class="filter-item"
-                @keyup.enter.native="handleFilter"
-              />
+          v-model="listQuery.search"
+          placeholder="名称"
+          style="width: 300px"
+          class="filter-item"
+          @keyup.enter.native="handleFilter"
+        />
         <el-button
           class="filter-item"
           type="primary"
           icon="el-icon-search"
           @click="handleFilter"
-          >搜索</el-button
-        >
+        >搜索</el-button>
         <el-button
           class="filter-item"
           type="primary"
           icon="el-icon-refresh-left"
           @click="resetFilter"
-          >重置</el-button
-        >
+        >重置</el-button>
       </div>
       <div style="margin-top: 2px">
         <el-button type="primary" icon="el-icon-plus" @click="handleCreate">新增</el-button>
@@ -31,12 +29,14 @@
     <el-card style="margin-top: 2px">
       <el-table
         v-loading="listLoading"
+        v-el-height-adaptive-table="{bottomOffset: 50}"
         :data="workflowList.results"
-        border fit stripe
+        border
+        fit
+        stripe
         style="width: 100%"
         height="100"
         highlight-current-row
-        v-el-height-adaptive-table="{bottomOffset: 50}"
       >
         <el-table-column type="index" width="50" />
         <el-table-column label="名称">
@@ -91,32 +91,33 @@
         @pagination="getList"
       />
     </el-card>
-    <div class="svgMark" v-if="limitedWatch" @click="closeMark">
+    <div v-if="limitedWatch" class="svgMark" @click="closeMark">
       <div class="svgWrapper">
-        <div class="svgItem">工作流流程图<i class="el-dialog__close el-icon el-icon-close" @click="closeMark"></i></div>
+        <div class="svgItem">工作流流程图<i class="el-dialog__close el-icon el-icon-close" @click="closeMark" /></div>
         <el-row>
           <el-col :span="12">
-            <p>工作流名称 ：{{watchedName}}</p>
+            <p>工作流名称 ：{{ watchedName }}</p>
           </el-col>
           <el-col :span="12">
-            <p>创建时间 ：{{watchedCreateTime}}</p>
+            <p>创建时间 ：{{ watchedCreateTime }}</p>
           </el-col>
         </el-row>
         <div style="width: 90%;margin: auto;">
-          <svg height=1000 id="mySvg" style="width:100%!important;">
-          </svg>
+          <svg id="mySvg" height="1000" style="width:100%!important;" />
         </div>
       </div>
     </div>
     <el-dialog
       :visible.sync="dialogVisible"
-      :title="dialogType === 'edit' ? '编辑工作流' : '新增工作流'">
+      :title="dialogType === 'edit' ? '编辑工作流' : '新增工作流'"
+    >
       <el-form
         ref="Form"
         :model="workflow"
         label-width="100px"
         label-position="right"
-        :rules="rule1">
+        :rules="rule1"
+      >
         <el-form-item label="名称" prop="name">
           <el-input v-model="workflow.name" placeholder="名称" />
         </el-form-item>
@@ -125,9 +126,9 @@
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input
+            v-model="workflow.description"
             type="textarea"
             :rows="4"
-            v-model="workflow.description"
             placeholder="描述"
           />
         </el-form-item>
@@ -136,7 +137,7 @@
           prop="view_permission_check"
           label-width="120px"
         >
-          <el-switch v-model="workflow.view_permission_check"></el-switch>
+          <el-switch v-model="workflow.view_permission_check" />
         </el-form-item>
         <el-form-item label="展现表单字段">
           <el-transfer

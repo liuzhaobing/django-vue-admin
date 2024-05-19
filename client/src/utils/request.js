@@ -5,7 +5,7 @@ import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  baseURL: '', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 10000 // request timeout
 })
@@ -54,8 +54,8 @@ service.interceptors.response.use(
           duration: 3 * 1000
         })
       }else{
-        MessageBox.confirm('认证失败,请重新登陆.', '确认退出', {
-          confirmButtonText: '重新登陆',
+        MessageBox.confirm('认证失败,请重新登录.', '确认退出', {
+          confirmButtonText: '重新登录',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
@@ -64,7 +64,7 @@ service.interceptors.response.use(
           })
         })
       }
-      
+
     } else if (res.code >= 400) {
       Message({
         message: res.msg || '请求出错',

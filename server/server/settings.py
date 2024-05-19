@@ -17,7 +17,6 @@ from . import conf
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -28,7 +27,6 @@ SECRET_KEY = 'ez9z3a4m*$%srn9ve_t71yd!v+&xn9@0k(e(+l6#g1h=e5i4da'
 DEBUG = conf.DEBUG
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -82,7 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'server.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = conf.DATABASES
@@ -105,7 +102,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -119,16 +115,17 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'dist/static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'dist', 'static')
+os.makedirs(STATIC_ROOT, exist_ok=True)
+
 if DEBUG:
     STATIC_ROOT = None
     STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, 'dist/static'),
+        os.path.join(BASE_DIR, 'dist', 'static'),
     )
 
 MEDIA_URL = '/media/'
@@ -180,15 +177,10 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # 缓存配置,使用redis
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
-    }
-}
+CACHES = conf.REDIS
 
 # celery配置,celery正常运行必须安装redis
-CELERY_BROKER_URL = "redis://localhost:6379/0"   # 任务存储
+CELERY_BROKER_URL = conf.REDIS['default']['LOCATION']  # 任务存储
 CELERYD_MAX_TASKS_PER_CHILD = 100  # 每个worker最多执行300个任务就会被销毁，可防止内存泄露
 CELERY_TIMEZONE = 'Asia/Shanghai'  # 设置时区
 CELERY_ENABLE_UTC = True  # 启动时区设置
@@ -196,8 +188,8 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 # swagger配置
 SWAGGER_SETTINGS = {
-   'LOGIN_URL':'/django/admin/login/',
-   'LOGOUT_URL':'/django/admin/logout/'
+    'LOGIN_URL': '/django/admin/login/',
+    'LOGOUT_URL': '/django/admin/logout/'
 }
 
 # 日志配置

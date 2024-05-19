@@ -2,21 +2,21 @@ import request from '@/utils/request'
 
 export function getRoutes() {
   return request({
-    url: '/system/permission/',
+    url: '/abp/manager/api/system/permission/',
     method: 'get'
   })
 }
 
 export function getRoleAll() {
   return request({
-    url: '/system/role/',
+    url: '/abp/manager/api/system/role/',
     method: 'get'
   })
 }
 
 export function createRole(data) {
   return request({
-    url: '/system/role/',
+    url: '/abp/manager/api/system/role/',
     method: 'post',
     data
   })
@@ -24,7 +24,7 @@ export function createRole(data) {
 
 export function updateRole(id, data) {
   return request({
-    url: `/system/role/${id}/`,
+    url: `/abp/manager/api/system/role/${id}/`,
     method: 'put',
     data
   })
@@ -32,7 +32,7 @@ export function updateRole(id, data) {
 
 export function deleteRole(id) {
   return request({
-    url: `/system/role/${id}/`,
+    url: `/abp/manager/api/system/role/${id}/`,
     method: 'delete'
   })
 }

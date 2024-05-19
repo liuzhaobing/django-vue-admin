@@ -9,16 +9,16 @@
         @keyup.native="handleFilter"
       />
       <el-button
+        v-if="checkPermission(['org_create'])"
         type="primary"
         icon="el-icon-plus"
-        @click="handleAdd"
-        v-if="checkPermission(['org_create'])"
         size="small"
-        >新增</el-button
-      >
+        @click="handleAdd"
+      >新增</el-button>
     </div>
     <el-table
       v-loading="listLoading"
+      v-el-height-adaptive-table="{ bottomOffset: 50 }"
       :data="
         tableData.filter(
           (data) =>
@@ -31,7 +31,6 @@
       height="100"
       stripe
       border
-      v-el-height-adaptive-table="{ bottomOffset: 50 }"
       default-expand-all
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
@@ -98,128 +97,128 @@
 </template>
 
 <script>
-import { getOrgAll, createOrg, deleteOrg, updateOrg } from "@/api/org";
-import { genTree } from "@/utils";
-import checkPermission from "@/utils/permission";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { getOrgAll, createOrg, deleteOrg, updateOrg } from '@/api/org'
+import { genTree } from '@/utils'
+import checkPermission from '@/utils/permission'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 const defaultOrg = {
   id: null,
-  name: "",
-  parent: null,
-};
+  name: '',
+  parent: null
+}
 export default {
   components: { Treeselect },
   data() {
     return {
       org: {
-        id: "",
-        name: "",
-        parent: "",
+        id: '',
+        name: '',
+        parent: ''
       },
-      search: "",
+      search: '',
       tableData: [],
       orgList: [],
       listLoading: true,
       dialogVisible: false,
-      dialogType: "new",
+      dialogType: 'new',
       rule1: {
-        name: [{ required: true, message: "请输入名称", trigger: "blur" }],
-        parent: [{ required: true, message: "请选择上级", trigger: "change" }],
-      },
-    };
+        name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+        parent: [{ required: true, message: '请选择上级', trigger: 'change' }]
+      }
+    }
   },
   computed: {},
   created() {
-    this.getList();
+    this.getList()
   },
   methods: {
     checkPermission,
     getList() {
-      this.listLoading = true;
+      this.listLoading = true
       getOrgAll().then((response) => {
-        this.orgList = response.data;
-        const data = genTree(response.data);
-        this.tableData = data;
-        this.listLoading = false;
-      });
+        this.orgList = response.data
+        const data = genTree(response.data)
+        this.tableData = data
+        this.listLoading = false
+      })
     },
     resetFilter() {
-      this.getList();
+      this.getList()
     },
     handleFilter() {
       const newData = this.orgList.filter(
         (data) =>
           !this.search ||
           data.name.toLowerCase().includes(this.search.toLowerCase())
-      );
-      this.tableData = genTree(newData);
+      )
+      this.tableData = genTree(newData)
     },
     handleAdd() {
-      this.org = Object.assign({}, defaultOrg);
-      this.dialogType = "new";
-      this.dialogVisible = true;
+      this.org = Object.assign({}, defaultOrg)
+      this.dialogType = 'new'
+      this.dialogVisible = true
       this.$nextTick(() => {
-        this.$refs["Form"].clearValidate();
-      });
+        this.$refs['Form'].clearValidate()
+      })
     },
     handleEdit(scope) {
-      this.org = Object.assign({}, scope.row); // copy obj
-      this.dialogType = "edit";
-      this.dialogVisible = true;
+      this.org = Object.assign({}, scope.row) // copy obj
+      this.dialogType = 'edit'
+      this.dialogVisible = true
       this.$nextTick(() => {
-        this.$refs["Form"].clearValidate();
-      });
+        this.$refs['Form'].clearValidate()
+      })
     },
     handleDelete(scope) {
-      this.$confirm("确认删除?", "警告", {
-        confirmButtonText: "确认",
-        cancelButtonText: "取消",
-        type: "error",
+      this.$confirm('确认删除?', '警告', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'error'
       })
-        .then(async () => {
-          await deleteOrg(scope.row.id);
-          this.getList();
+        .then(async() => {
+          await deleteOrg(scope.row.id)
+          this.getList()
           this.$message({
-            type: "success",
-            message: "成功删除!",
-          });
+            type: 'success',
+            message: '成功删除!'
+          })
         })
         .catch((err) => {
-          console.error(err);
-        });
+          console.error(err)
+        })
     },
     async confirmOrg(form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
-          const isEdit = this.dialogType === "edit";
+          const isEdit = this.dialogType === 'edit'
           if (isEdit) {
             updateOrg(this.org.id, this.org).then(() => {
-              this.getList();
-              this.dialogVisible = false;
+              this.getList()
+              this.dialogVisible = false
               this.$message({
-                message: "编辑成功",
-                type: "success",
-              });
-            });
+                message: '编辑成功',
+                type: 'success'
+              })
+            })
           } else {
             createOrg(this.org).then((res) => {
               // this.org = res.data
               // this.tableData.unshift(this.org)
-              this.getList();
-              this.dialogVisible = false;
+              this.getList()
+              this.dialogVisible = false
               this.$message({
-                message: "新增成功",
-                type: "success",
-              });
-            });
+                message: '新增成功',
+                type: 'success'
+              })
+            })
           }
         } else {
-          return false;
+          return false
         }
-      });
-    },
-  },
-};
+      })
+    }
+  }
+}
 </script>

@@ -1,7 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
-    <div class="dashboard-text">perms: <span v-for="perm in perms" :key="perm">{{ perm }}</span></div>
+    <div class="dashboard-text">{{ greeting }}，{{ name }}！</div>
   </div>
 </template>
 
@@ -14,7 +13,21 @@ export default {
     ...mapGetters([
       'name',
       'perms'
-    ])
+    ]),
+    greeting() {
+      const hour = new Date().getHours()
+      if (hour < 6) {
+        return '凌晨好'
+      } else if (hour < 12) {
+        return '早上好'
+      } else if (hour < 14) {
+        return '中午好'
+      } else if (hour < 18) {
+        return '下午好'
+      } else {
+        return '晚上好'
+      }
+    }
   }
 }
 </script>

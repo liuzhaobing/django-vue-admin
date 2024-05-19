@@ -2,67 +2,68 @@
   <div class="app-container">
     <el-card style="margin-bottom: 10px">
       <el-steps :active="actives" spac="400px" align-center="" style="padding-top: 20px;">
-        <el-step :title="item.name" v-for="item in flowSteps " :key="item.id"></el-step>
+        <el-step v-for="item in flowSteps " :key="item.id" :title="item.name" />
       </el-steps>
     </el-card>
     <el-row>
       <el-col :span="8">
         <el-card>
-          <svg height=800 id="mySvg" style="width:100%!important;"></svg>
+          <svg id="mySvg" height="800" style="width:100%!important;" />
         </el-card>
       </el-col>
       <el-col :span="16">
         <el-card style="margin-left: 10px">
-          <p style="text-align: center;font-size: 20px">{{ticketDetail.title}}</p>
+          <p style="text-align: center;font-size: 20px">{{ ticketDetail.title }}</p>
           <el-col :span="12">
             <div class="items">
               <span class="itemLabel">工作流：</span>
-              <span>{{ticketDetail.workflow_.name}}</span>
+              <span>{{ ticketDetail.workflow_.name }}</span>
             </div>
           </el-col>
           <el-col :span="12">
             <div class="items">
               <span class="itemLabel">流水号：</span>
-              <span>{{ticketDetail.sn}}</span>
+              <span>{{ ticketDetail.sn }}</span>
             </div>
           </el-col>
           <el-col :span="12">
             <div class="items">
               <span class="itemLabel">创建时间：</span>
-              <span>{{ticketDetail.create_time}}</span>
+              <span>{{ ticketDetail.create_time }}</span>
             </div>
           </el-col>
           <el-col v-for="item in ticketDetail.ticket_data_" :key="item.id" :span="12">
             <div class="items">
-              <span class="itemLabel">{{item.field_name}}：</span>
-              <span>{{item.field_display}}</span>
+              <span class="itemLabel">{{ item.field_name }}：</span>
+              <span>{{ item.field_display }}</span>
             </div>
           </el-col>
         </el-card>
         <el-card style="margin-left: 10px">
-          <el-table :data="logs" fit stripe
-                    style="width: 100%;border-top:1px solid #EBEEF5;"
-                    height="500"
-                    highlight-current-row
+          <el-table
+            :data="logs"
+            fit
+            stripe
+            style="width: 100%;border-top:1px solid #EBEEF5;"
+            height="500"
+            highlight-current-row
           >
             <el-table-column label="工单标题" min-width="100">
-              <template slot-scope="scope" v-if="scope.row.ticket_data">
-                <span>{{scope.row.ticket_data.title}}中</span>
+              <template v-if="scope.row.ticket_data" slot-scope="scope">
+                <span>{{ scope.row.ticket_data.title }}中</span>
               </template>
             </el-table-column>
             <el-table-column label="进行状态" min-width="100">
-              <template slot-scope="scope" v-if="scope.row.state_">
-                <span v-if="scope.row.state_.type==0">{{scope.row.state_.name}}中</span>
-                <span v-else>已{{scope.row.state_.name}}</span>
+              <template v-if="scope.row.state_" slot-scope="scope">
+                <span v-if="scope.row.state_.type==0">{{ scope.row.state_.name }}中</span>
+                <span v-else>已{{ scope.row.state_.name }}</span>
               </template>
             </el-table-column>
             <el-table-column label="操作人" min-width="100">
-              <template slot-scope="scope" v-if="scope.row.participant_">{{ scope.row.participant_.name }}</template>
+              <template v-if="scope.row.participant_" slot-scope="scope">{{ scope.row.participant_.name }}</template>
             </el-table-column>
-            <el-table-column label="操作意见" min-width="100" prop="suggestion">
-            </el-table-column>
-            <el-table-column label="更新时间" min-width="100" prop="update_time">
-            </el-table-column>
+            <el-table-column label="操作意见" min-width="100" prop="suggestion" />
+            <el-table-column label="更新时间" min-width="100" prop="update_time" />
           </el-table>
         </el-card>
       </el-col>

@@ -1,17 +1,17 @@
-import { getToken } from "@/utils/auth"
+import { getToken } from '@/utils/auth'
 import request from '@/utils/request'
 
 export function upUrl() {
-  return process.env.VUE_APP_BASE_API + '/file/'
+  return '/abp/manager/api/file/'
 }
 
 export function upHeaders() {
-  return { Authorization: "Bearer " + getToken() }
+  return { Authorization: 'Bearer ' + getToken() }
 }
 
 export function getFileList(query) {
   return request({
-    url: '/file/',
+    url: '/abp/manager/api/file/',
     method: 'get',
     params: query
   })

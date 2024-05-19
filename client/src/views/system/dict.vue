@@ -4,92 +4,92 @@
       <el-col :md="6">
         <el-card>
           <div slot="header" class="clearfix">
-    <span>字典类型</span>
-    <el-button v-if="checkPermission(['dicttype_add'])" style="float: right; padding: 3px 0" type="text" icon="el-icon-plus" @click="handleAddDictType" >新增</el-button>
-  </div>
-        
-        <el-tree
-          ref="tree"
-          v-loading="treeLoding"
-          class="filter-tree"
-          :data="dictTypeData"
-          highlight-current
-          :expand-on-click-node="false"
-          :filter-node-method="filterNode"
-          style="margin-top:10px;"
-          @node-click="handleDictTypeClick"
-        >
-        <span class="custom-tree-node" slot-scope="{ node, data }">
-        <span>{{ node.label }}</span>
-        <span>
-          <el-button
-            type="text"
-            size="mini"
-            v-if="checkPermission(['dicttype_delete'])"
-            @click="handleEditDictType(data)">
-            编辑
-          </el-button>
-          <!-- <el-button
+            <span>字典类型</span>
+            <el-button v-if="checkPermission(['dicttype_add'])" style="float: right; padding: 3px 0" type="text" icon="el-icon-plus" @click="handleAddDictType">新增</el-button>
+          </div>
+
+          <el-tree
+            ref="tree"
+            v-loading="treeLoding"
+            class="filter-tree"
+            :data="dictTypeData"
+            highlight-current
+            :expand-on-click-node="false"
+            :filter-node-method="filterNode"
+            style="margin-top:10px;"
+            @node-click="handleDictTypeClick"
+          >
+            <span slot-scope="{ node, data }" class="custom-tree-node">
+              <span>{{ node.label }}</span>
+              <span>
+                <el-button
+                  v-if="checkPermission(['dicttype_delete'])"
+                  type="text"
+                  size="mini"
+                  @click="handleEditDictType(data)"
+                >
+                  编辑
+                </el-button>
+                <!-- <el-button
             type="text"
             size="mini"
             @click="handleDeleteDictType">
             删除
           </el-button> -->
-        </span>
-      </span>
-        </el-tree>
+              </span>
+            </span>
+          </el-tree>
         </el-card>
       </el-col>
       <el-col :md="18">
         <el-card>
           <div slot="header" class="clearfix">
-    <span>字典详情</span>
-  </div>
-  <div >
-    <el-button v-show="listQuery.type" type="primary" icon="el-icon-plus" @click="handleAddDict" v-if="checkPermission(['dic_create'])" size="small">新增</el-button>
-  </div>
-        <el-table
-          v-show="listQuery.type"
-          v-loading="listLoading"
-          :data="dictList"
-          style="width: 100%;margin-top:10px;"
-          highlight-current-row
-          row-key="id"
-          height="100"
-          stripe
-          border
-          v-el-height-adaptive-table="{bottomOffset: 50}"
-          default-expand-all
-          :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-        >
-          <el-table-column type="index" width="50" />
-          <el-table-column label="代号/编号">
-            <template slot-scope="scope">{{ scope.row.code }}</template>
-          </el-table-column>
-          <el-table-column label="名称">
-            <template slot-scope="scope">{{ scope.row.name }}</template>
-          </el-table-column>
-          <el-table-column label="描述">
-            <template slot-scope="scope">{{ scope.row.description }}</template>
-          </el-table-column>
-          <el-table-column label="是否有效">
-            <template slot-scope="scope">
-              
-              <el-tag type="success" v-if="scope.row.is_used">有效</el-tag>
-              <el-tag type="danger" v-else>无效</el-tag>
+            <span>字典详情</span>
+          </div>
+          <div>
+            <el-button v-show="listQuery.type" v-if="checkPermission(['dic_create'])" type="primary" icon="el-icon-plus" size="small" @click="handleAddDict">新增</el-button>
+          </div>
+          <el-table
+            v-show="listQuery.type"
+            v-loading="listLoading"
+            v-el-height-adaptive-table="{bottomOffset: 50}"
+            :data="dictList"
+            style="width: 100%;margin-top:10px;"
+            highlight-current-row
+            row-key="id"
+            height="100"
+            stripe
+            border
+            default-expand-all
+            :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+          >
+            <el-table-column type="index" width="50" />
+            <el-table-column label="代号/编号">
+              <template slot-scope="scope">{{ scope.row.code }}</template>
+            </el-table-column>
+            <el-table-column label="名称">
+              <template slot-scope="scope">{{ scope.row.name }}</template>
+            </el-table-column>
+            <el-table-column label="描述">
+              <template slot-scope="scope">{{ scope.row.description }}</template>
+            </el-table-column>
+            <el-table-column label="是否有效">
+              <template slot-scope="scope">
+
+                <el-tag v-if="scope.row.is_used" type="success">有效</el-tag>
+                <el-tag v-else type="danger">无效</el-tag>
               </template>
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button
-                v-if="!scope.row.is_superuser"
-                :disabled="!checkPermission(['dict_update'])"
-                type="primary"
-                size="small"
-                icon="el-icon-edit"
-                @click="handleEdit(scope)"
-                
-              />
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  v-if="!scope.row.is_superuser"
+                  :disabled="!checkPermission(['dict_update'])"
+                  type="primary"
+                  size="small"
+                  icon="el-icon-edit"
+                  @click="handleEdit(scope)"
+                />
               <!-- <el-button
                 v-if="!scope.row.is_superuser"
                 :disabled="!checkPermission(['dict_delete'])"
@@ -98,10 +98,10 @@
                 icon="el-icon-delete"
                 @click="handleDelete(scope)"
               /> -->
-            </template>
-          </el-table-column>
-        </el-table>
-        <p v-show="!listQuery.type">点击左侧类型查看字典</p>
+              </template>
+            </el-table-column>
+          </el-table>
+          <p v-show="!listQuery.type">点击左侧类型查看字典</p>
         <!-- <pagination
           v-show="dictList.count>0"
           :total="dictList.count"
@@ -122,7 +122,7 @@
           <el-input v-model="dicttype.code" placeholder="代号" />
         </el-form-item>
         <el-form-item label="父级" prop="parent">
-          <treeselect v-model="dicttype.parent" :multiple="false" :options="dictTypeData" placeholder="父级"/>
+          <treeselect v-model="dicttype.parent" :multiple="false" :options="dictTypeData" placeholder="父级" />
         </el-form-item>
       </el-form>
       <span slot="footer">
@@ -137,21 +137,21 @@
           <el-input v-model="dict.code" placeholder="编号" />
         </el-form-item>
         <el-form-item label="名称" prop="name">
-          <el-input type="textarea" v-model="dict.name" placeholder="名称" />
+          <el-input v-model="dict.name" type="textarea" placeholder="名称" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
-          <el-input type="textarea" v-model="dict.description" placeholder="描述" />
+          <el-input v-model="dict.description" type="textarea" placeholder="描述" />
         </el-form-item>
         <el-form-item label="父级" prop="parent">
-          <treeselect v-model="dict.parent" :multiple="false" :options="dictList" placeholder="父级"/>
+          <treeselect v-model="dict.parent" :multiple="false" :options="dictList" placeholder="父级" />
         </el-form-item>
         <el-form-item label="排序" prop="sort">
-          <el-input-number v-model="dict.sort" :min="1" :max="999"></el-input-number>
+          <el-input-number v-model="dict.sort" :min="1" :max="999" />
         </el-form-item>
         <el-form-item label="是否有效" prop="is_used">
           <el-switch
-  v-model="dict.is_used">
-</el-switch>
+            v-model="dict.is_used"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer">
@@ -192,7 +192,7 @@ const defaultDict = {
   sort: 1,
   type: null,
   is_used: true,
-  parent:null
+  parent: null
 }
 export default {
   components: { Pagination, Treeselect },
@@ -200,7 +200,7 @@ export default {
     return {
       dicttype: Object.assign({}, defaultDictType),
       dict: Object.assign({}, defaultDict),
-      search:'',
+      search: '',
       dictList: [],
       listLoading: true,
       listQuery: {},
@@ -217,7 +217,7 @@ export default {
       },
       filterDictTypeText: '',
       treeLoding: false,
-      dictTypeData: [],
+      dictTypeData: []
     }
   },
   computed: {},
@@ -242,11 +242,11 @@ export default {
     getList() {
       this.listLoading = true
       getDictList(this.listQuery).then(response => {
-          if (response.data) {
-            this.dictList = genTree(response.data)
+        if (response.data) {
+          this.dictList = genTree(response.data)
           this.listLoading = false
-          }
-      }).catch(error=>{this.listLoading = false})
+        }
+      }).catch(error => { this.listLoading = false })
     },
     getDictTypeList() {
       this.treeLoding = true
@@ -287,7 +287,6 @@ export default {
       this.$nextTick(() => {
         this.$refs['Form1'].clearValidate()
       })
-
     },
     handleDelete(scope) {
       this.$confirm('确认删除?', '警告', {
@@ -297,12 +296,12 @@ export default {
       })
         .then(async() => {
           const { code } = await deleteDict(scope.row.id)
-          if (code>=200){
-          this.dictList.splice(scope.row.index, 1)
-          this.$message({
-            type: 'success',
-            message: '成功删除!'
-          })
+          if (code >= 200) {
+            this.dictList.splice(scope.row.index, 1)
+            this.$message({
+              type: 'success',
+              message: '成功删除!'
+            })
           }
         })
         .catch(err => {
@@ -315,22 +314,22 @@ export default {
           const isEdit = this.dgT1 === 'edit'
           if (isEdit) {
             updateDictType(this.dicttype.id, this.dicttype).then(res => {
-                this.getDictTypeList()
-                this.dgV1 = false
-                this.$message({
-                  message: '编辑成功',
-                  type: 'success',
-                })
-            }).catch(error=>{})
+              this.getDictTypeList()
+              this.dgV1 = false
+              this.$message({
+                message: '编辑成功',
+                type: 'success'
+              })
+            }).catch(error => {})
           } else {
             createDictType(this.dicttype).then(res => {
-                this.getDictTypeList()
-                this.dgV1 = false
-                this.$message({
-                  message: '新增成功',
-                  type: 'success',
-                })
-            }).catch(error=>{})
+              this.getDictTypeList()
+              this.dgV1 = false
+              this.$message({
+                message: '新增成功',
+                type: 'success'
+              })
+            }).catch(error => {})
           }
         } else {
           return false
@@ -343,22 +342,22 @@ export default {
           const isEdit = this.dgT2 === 'edit'
           if (isEdit) {
             updateDict(this.dict.id, this.dict).then(res => {
-                this.getList()
-                this.dgV2 = false
-                this.$message({
-                  message: '编辑成功',
-                  type: 'success',
-                })
-            }).catch(error=>{})
+              this.getList()
+              this.dgV2 = false
+              this.$message({
+                message: '编辑成功',
+                type: 'success'
+              })
+            }).catch(error => {})
           } else {
             createDict(this.dict).then(res => {
-                this.getList()
-                this.dgV2 = false
-                this.$message({
-                  message: '新增成功',
-                  type: 'success',
-                })
-            }).catch(error=>{})
+              this.getList()
+              this.dgV2 = false
+              this.$message({
+                message: '新增成功',
+                type: 'success'
+              })
+            }).catch(error => {})
           }
         } else {
           return false

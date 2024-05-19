@@ -2,13 +2,13 @@
   <div class="app-container">
     <el-card style="margin-bottom: 10px">
       <el-steps :active="actives" spac="400px" align-center="" style="padding-top: 20px;">
-        <el-step :title="item.name" v-for="item in flowSteps " :key="item.id"></el-step>
+        <el-step v-for="item in flowSteps " :key="item.id" :title="item.name" />
       </el-steps>
     </el-card>
     <el-row>
       <el-col :span="8">
         <el-card>
-          <svg height=800 id="mySvg" style="width:100%!important;"></svg>
+          <svg id="mySvg" height="800" style="width:100%!important;" />
         </el-card>
       </el-col>
       <el-col :span="16">
@@ -16,82 +16,78 @@
           <el-form ref="Form" :model="ticketForm" label-width="100px" label-position="right" :rules="ticketFormRule">
             <el-col :span="12">
               <el-form-item label="标题" style="margin-bottom: 0">
-                <span>{{ticketDetail.title}}</span>
+                <span>{{ ticketDetail.title }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="工作流" style="margin-bottom: 0">
-                <span v-if="ticketDetail.workflow_">{{ticketDetail.workflow_.name}}</span>
+                <span v-if="ticketDetail.workflow_">{{ ticketDetail.workflow_.name }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="流水号" style="margin-bottom: 0">
-                <span>{{ticketDetail.sn}}</span>
+                <span>{{ ticketDetail.sn }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="创建时间" style="margin-bottom: 0">
-                <span>{{ticketDetail.create_time}}</span>
+                <span>{{ ticketDetail.create_time }}</span>
               </el-form-item>
             </el-col>
             <el-row style="display: flex;flex-wrap: wrap;width:100%;">
-              <el-col v-for="item in ticketDetail.ticket_data_" :key="item.id" :span="12" v-show="!item.is_hidden">
+              <el-col v-for="item in ticketDetail.ticket_data_" v-show="!item.is_hidden" :key="item.id" :span="12">
                 <el-form-item v-if="item.field_state=='1'" :label="item.field_name">
                   <template v-if="item.field_type=='string'">
-                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" :placeholder="item.description" disabled="true"/>
+                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" :placeholder="item.description" disabled="true" />
                   </template>
                   <template v-if="item.field_type==='int'">
-                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" type="number" :placeholder="item.description" oninput="value=value.replace(/[^\d]/g,'')" disabled="true"/>
+                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" type="number" :placeholder="item.description" oninput="value=value.replace(/[^\d]/g,'')" disabled="true" />
                   </template>
                   <template v-if="item.field_type==='float'">
-                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" type="number" :placeholder="item.description" disabled="true"/>
+                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" type="number" :placeholder="item.description" disabled="true" />
                   </template>
                   <template v-if="item.field_type==='date'">
                     <el-date-picker
-                      disabled="true"
                       v-model="ticketDetail.ticket_data[item.field_key]"
+                      disabled="true"
                       type="date"
                       placeholder="选择日期"
                       value-format="yyyy-MM-dd"
                       style="width: 100%"
-                    >
-                    </el-date-picker>
+                    />
                   </template>
                   <template v-if="item.field_type==='datetime'">
                     <el-date-picker
-                      disabled="true"
                       v-model="ticketDetail.ticket_data[item.field_key]"
+                      disabled="true"
                       type="datetime"
                       placeholder="选择日期"
                       value-format="yyyy-MM-dd HH:mm:ss"
                       style="width: 100%"
-                    >
-                    </el-date-picker>
+                    />
                   </template>
                   <template v-if="item.field_type==='select'">
-                    <el-select style="width: 100%" v-model="ticketDetail.ticket_data[item.field_key]" placeholder="请选择" disabled="true">
+                    <el-select v-model="ticketDetail.ticket_data[item.field_key]" style="width: 100%" placeholder="请选择" disabled="true">
                       <el-option
                         v-for="item1 in item.field_choice"
                         :key="item1.id"
                         :label="item1.name"
                         :value="item1.id"
-                      >
-                      </el-option>
+                      />
                     </el-select>
                   </template>
                   <template v-if="item.field_type==='selects'">
-                    <el-select  style="width: 100%" multiple v-model="ticketDetail.ticket_data[item.field_key]" placeholder="请选择" disabled="true">
+                    <el-select v-model="ticketDetail.ticket_data[item.field_key]" style="width: 100%" multiple placeholder="请选择" disabled="true">
                       <el-option
                         v-for="item1 in item.field_choice"
                         :key="item1.id"
                         :label="item1.name"
                         :value="item1.id"
-                      >
-                      </el-option>
+                      />
                     </el-select>
                   </template>
                   <template v-if="item.field_type==='textarea'">
-                    <el-input type="textarea" :rows="3" v-model="ticketDetail.ticket_data[item.field_key]" placeholder="内容" disabled="true"/>
+                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" type="textarea" :rows="3" placeholder="内容" disabled="true" />
                   </template>
                   <template v-if="item.field_type==='file'">
                     <el-upload
@@ -117,7 +113,7 @@
                   }"
                 >
                   <template v-if="item.field_type=='string'">
-                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" :placeholder="item.description"/>
+                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" :placeholder="item.description" />
                   </template>
                   <template v-if="item.field_type==='int'">
                     <el-input v-model="ticketDetail.ticket_data[item.field_key]" type="number" :placeholder="item.description" oninput="value=value.replace(/[^\d]/g,'')" />
@@ -132,8 +128,7 @@
                       placeholder="选择日期"
                       value-format="yyyy-MM-dd"
                       style="width: 100%"
-                    >
-                    </el-date-picker>
+                    />
                   </template>
                   <template v-if="item.field_type==='datetime'">
                     <el-date-picker
@@ -142,33 +137,30 @@
                       placeholder="选择日期"
                       value-format="yyyy-MM-dd HH:mm:ss"
                       style="width: 100%"
-                    >
-                    </el-date-picker>
+                    />
                   </template>
                   <template v-if="item.field_type==='select'">
-                    <el-select style="width: 100%" v-model="ticketDetail.ticket_data[item.field_key]" placeholder="请选择">
+                    <el-select v-model="ticketDetail.ticket_data[item.field_key]" style="width: 100%" placeholder="请选择">
                       <el-option
                         v-for="item1 in item.field_choice"
                         :key="item1.id"
                         :label="item1.name"
                         :value="item1.id"
-                      >
-                      </el-option>
+                      />
                     </el-select>
                   </template>
                   <template v-if="item.field_type==='selects'">
-                    <el-select  style="width: 100%" multiple v-model="ticketDetail.ticket_data[item.field_key]" placeholder="请选择">
+                    <el-select v-model="ticketDetail.ticket_data[item.field_key]" style="width: 100%" multiple placeholder="请选择">
                       <el-option
                         v-for="item1 in item.field_choice"
                         :key="item1.id"
                         :label="item1.name"
                         :value="item1.id"
-                      >
-                      </el-option>
+                      />
                     </el-select>
                   </template>
                   <template v-if="item.field_type==='textarea'">
-                    <el-input type="textarea" :rows="3" v-model="ticketDetail.ticket_data[item.field_key]" placeholder="内容" />
+                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" type="textarea" :rows="3" placeholder="内容" />
                   </template>
                   <template v-if="item.field_type==='file'">
                     <el-upload
@@ -190,7 +182,7 @@
                   :label="item.field_name"
                 >
                   <template v-if="item.field_type=='string'">
-                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" :placeholder="item.description"/>
+                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" :placeholder="item.description" />
                   </template>
                   <template v-if="item.field_type==='int'">
                     <el-input v-model="ticketDetail.ticket_data[item.field_key]" type="number" :placeholder="item.description" oninput="value=value.replace(/[^\d]/g,'')" />
@@ -205,8 +197,7 @@
                       placeholder="选择日期"
                       value-format="yyyy-MM-dd"
                       style="width: 100%"
-                    >
-                    </el-date-picker>
+                    />
                   </template>
                   <template v-if="item.field_type==='datetime'">
                     <el-date-picker
@@ -215,33 +206,30 @@
                       placeholder="选择日期"
                       value-format="yyyy-MM-dd HH:mm:ss"
                       style="width: 100%"
-                    >
-                    </el-date-picker>
+                    />
                   </template>
                   <template v-if="item.field_type==='select'">
-                    <el-select style="width: 100%" v-model="ticketDetail.ticket_data[item.field_key]" placeholder="请选择">
+                    <el-select v-model="ticketDetail.ticket_data[item.field_key]" style="width: 100%" placeholder="请选择">
                       <el-option
                         v-for="item1 in item.field_choice"
                         :key="item1.id"
                         :label="item1.name"
                         :value="item1.id"
-                      >
-                      </el-option>
+                      />
                     </el-select>
                   </template>
                   <template v-if="item.field_type==='selects'">
-                    <el-select  style="width: 100%" multiple v-model="ticketDetail.ticket_data[item.field_key]" placeholder="请选择">
+                    <el-select v-model="ticketDetail.ticket_data[item.field_key]" style="width: 100%" multiple placeholder="请选择">
                       <el-option
                         v-for="item1 in item.field_choice"
                         :key="item1.id"
                         :label="item1.name"
                         :value="item1.id"
-                      >
-                      </el-option>
+                      />
                     </el-select>
                   </template>
                   <template v-if="item.field_type==='textarea'">
-                    <el-input type="textarea" :rows="3" v-model="ticketDetail.ticket_data[item.field_key]" placeholder="内容" />
+                    <el-input v-model="ticketDetail.ticket_data[item.field_key]" type="textarea" :rows="3" placeholder="内容" />
                   </template>
                   <template v-if="item.field_type==='file'">
                     <el-upload
@@ -263,7 +251,7 @@
             <el-row>
               <el-col :span="12">
                 <el-form-item label="审批意见">
-                  <el-input type="textarea" :rows="3" v-model="ticketForm.suggestion" placeholder="审批意见"/>
+                  <el-input v-model="ticketForm.suggestion" type="textarea" :rows="3" placeholder="审批意见" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -279,34 +267,36 @@
             </div>
             <div>
               <el-button v-if="ticketDetail.in_add_node" class="filter-item" type="primary" @click="handleClick('3')">加签处理</el-button>
-              <el-button v-for="item in operationBtn" :key="item.id" class="filter-item" type="primary" @click="operationSubmit(item.id)">{{item.name}}</el-button>
+              <el-button v-for="item in operationBtn" :key="item.id" class="filter-item" type="primary" @click="operationSubmit(item.id)">{{ item.name }}</el-button>
             </div>
           </div>
         </el-card>
         <el-card style="margin-left: 10px">
-          <el-table :data="logs"  fit stripe
-                    style="width: 100%;border-top:1px solid #EBEEF5;"
-                    height="100"
-                    highlight-current-row
-                    v-el-height-adaptive-table="{bottomOffset: 60}">
+          <el-table
+            v-el-height-adaptive-table="{bottomOffset: 60}"
+            :data="logs"
+            fit
+            stripe
+            style="width: 100%;border-top:1px solid #EBEEF5;"
+            height="100"
+            highlight-current-row
+          >
             <el-table-column label="工单标题" min-width="100">
-              <template slot-scope="scope" v-if="scope.row.ticket_data">
-                <span>{{scope.row.ticket_data.title}}中</span>
+              <template v-if="scope.row.ticket_data" slot-scope="scope">
+                <span>{{ scope.row.ticket_data.title }}中</span>
               </template>
             </el-table-column>
-            <el-table-column label="进行状态"  min-width="100">
-              <template slot-scope="scope" v-if="scope.row.state_">
-                <span v-if="scope.row.state_.type==0">{{scope.row.state_.name}}中</span>
-                <span v-else>已{{scope.row.state_.name}}</span>
+            <el-table-column label="进行状态" min-width="100">
+              <template v-if="scope.row.state_" slot-scope="scope">
+                <span v-if="scope.row.state_.type==0">{{ scope.row.state_.name }}中</span>
+                <span v-else>已{{ scope.row.state_.name }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="操作人"  min-width="100">
-              <template slot-scope="scope" v-if="scope.row.participant_">{{ scope.row.participant_.name }}</template>
+            <el-table-column label="操作人" min-width="100">
+              <template v-if="scope.row.participant_" slot-scope="scope">{{ scope.row.participant_.name }}</template>
             </el-table-column>
-            <el-table-column label="操作意见" min-width="100" prop="suggestion">
-            </el-table-column>
-            <el-table-column label="更新时间"  min-width="100" prop="update_time">
-            </el-table-column>
+            <el-table-column label="操作意见" min-width="100" prop="suggestion" />
+            <el-table-column label="更新时间" min-width="100" prop="update_time" />
           </el-table>
         </el-card>
       </el-col>
@@ -315,10 +305,10 @@
     <el-dialog :visible.sync="limitedHandle" :title="handleTitle">
       <el-row>
         <el-form ref="Form" :model="handleForm" label-width="100px" label-position="right">
-          <el-col :span="1" style="height: 1px;"></el-col>
+          <el-col :span="1" style="height: 1px;" />
           <el-col :span="22" style="margin:3vh 0">
             <el-form-item :label="handleLabel">
-              <el-input type="textarea" :rows="3" v-model="handleForm.suggestion" placeholder="撤回原因"/>
+              <el-input v-model="handleForm.suggestion" type="textarea" :rows="3" placeholder="撤回原因" />
             </el-form-item>
           </el-col>
         </el-form>
@@ -333,13 +323,12 @@
         <el-form ref="Form" :model="addForm" label-width="100px" label-position="right">
           <el-col :span="22">
             <el-form-item label="加签操作人">
-              <el-select  style="width: 100%" v-model="addForm.toadd_user" placeholder="加签操作人">
-                <el-option v-for="item in staffs" :key="item.id" :label="item.name" :value="item.id">
-                </el-option>
+              <el-select v-model="addForm.toadd_user" style="width: 100%" placeholder="加签操作人">
+                <el-option v-for="item in staffs" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="加签原因">
-              <el-input type="textarea" :rows="3" v-model="addForm.suggestion" placeholder="加签原因"/>
+              <el-input v-model="addForm.suggestion" type="textarea" :rows="3" placeholder="加签原因" />
             </el-form-item>
           </el-col>
         </el-form>

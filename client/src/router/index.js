@@ -59,17 +59,17 @@ export const constantRoutes = [
     redirect: '/changepassword',
     name: 'ChangePW',
     meta: { title: '修改密码', icon: 'tree' },
-    hidden:true,
+    hidden: true,
     children: [
       {
         path: '',
         name: 'ChangePassword',
         component: () => import('@/views/system/changepassword'),
-        meta: { title: '修改密码', noCache: true, icon: ''},
+        meta: { title: '修改密码', noCache: true, icon: '' },
         hidden: true
-      },
+      }
     ]
-  },
+  }
 
 ]
 
@@ -83,7 +83,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/workflow/index',
     name: 'workflow',
-    meta: { title: '工作流', icon: 'example', perms: ['workflow_manage']  },
+    meta: { title: '工作流', icon: 'example', perms: ['workflow_manage'] },
     children: [
       {
         path: 'index',
@@ -95,13 +95,13 @@ export const asyncRoutes = [
         path: 'ticket',
         name: 'ticket',
         component: () => import('@/views/workflow/ticket'),
-        meta: { title: '工单管理', icon: 'example' ,noCache: true, perms: ['workflow_ticket'] },
+        meta: { title: '工单管理', icon: 'example', noCache: true, perms: ['workflow_ticket'] }
       },
       {
         path: 'workFlowTickets',
         name: 'workFlowTickets',
         component: () => import('@/views/workflow/workFlowTickets'),
-        meta: { title: '工单', icon: 'example' ,noCache: true,},
+        meta: { title: '工单', icon: 'example', noCache: true },
         hidden: true
       },
       {
@@ -115,16 +115,16 @@ export const asyncRoutes = [
         path: 'ticketHandle',
         name: 'ticketHandle',
         component: () => import('@/views/workflow/ticketHandle'),
-        meta: { title: '工单处理', icon: 'example',noCache: true,},
+        meta: { title: '工单处理', icon: 'example', noCache: true },
         hidden: true
       },
       {
         path: 'ticketDetail',
         name: 'ticketDetail',
         component: () => import('@/views/workflow/ticketDetail'),
-        meta: { title: '工单详情', icon: 'example',noCache: true,},
+        meta: { title: '工单详情', icon: 'example', noCache: true },
         hidden: true
-      },
+      }
     ]
   },
   {
@@ -205,47 +205,47 @@ export const asyncRoutes = [
         name: 'Perm',
         component: () => import('@/views/system/perm'),
         meta: { title: '权限菜单', icon: 'example', perms: ['perm_manage'] }
-      },
-      {
-        path: 'form-gen-link',
-        component: Layout,
-        children: [
-          {
-            path: 'https://jakhuang.github.io/form-generator/',
-            meta: { title: '表单设计器', icon: 'link', perms: ['dev_form_gen'] }
-          }
-        ]
-      },
-      {
-        path: 'docs',
-        component: Layout,
-        children: [
-          {
-            path: process.env.VUE_APP_BASE_API + '/docs/',
-            meta: { title: '接口文档', icon: 'link', perms: ['dev_docs'] }
-          }
-        ]
-      },
-      {
-        path: 'swagger',
-        component: Layout,
-        children: [
-          {
-            path: process.env.VUE_APP_BASE_API + '/swagger/',
-            meta: { title: 'Swagger文档', icon: 'link', perms: ['dev_docs'] }
-          }
-        ]
-      },
-      {
-        path: 'admin-link',
-        component: Layout,
-        children: [
-          {
-            path: process.env.VUE_APP_BASE_API + '/admin/',
-            meta: { title: 'Django后台', icon: 'link', perms: ['dev_admin'] }
-          }
-        ]
       }
+      // {
+      //   path: 'form-gen-link',
+      //   component: Layout,
+      //   children: [
+      //     {
+      //       path: 'https://jakhuang.github.io/form-generator/',
+      //       meta: { title: '表单设计器', icon: 'link', perms: ['dev_form_gen'] }
+      //     }
+      //   ]
+      // },
+      // {
+      //   path: 'docs',
+      //   component: Layout,
+      //   children: [
+      //     {
+      //       path: process.env.VUE_APP_BASE_API + '/docs/',
+      //       meta: { title: '接口文档', icon: 'link', perms: ['dev_docs'] }
+      //     }
+      //   ]
+      // },
+      // {
+      //   path: 'swagger',
+      //   component: Layout,
+      //   children: [
+      //     {
+      //       path: process.env.VUE_APP_BASE_API + '/swagger/',
+      //       meta: { title: 'Swagger文档', icon: 'link', perms: ['dev_docs'] }
+      //     }
+      //   ]
+      // },
+      // {
+      //   path: 'admin-link',
+      //   component: Layout,
+      //   children: [
+      //     {
+      //       path: process.env.VUE_APP_BASE_API + '/admin/',
+      //       meta: { title: 'Django后台', icon: 'link', perms: ['dev_admin'] }
+      //     }
+      //   ]
+      // }
     ]
   },
   // 404 page must be placed at the end !!!

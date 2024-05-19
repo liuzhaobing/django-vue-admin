@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/token/',
+    url: '/abp/manager/api/token/',
     method: 'post',
     data
   })
@@ -10,21 +10,21 @@ export function login(data) {
 
 export function logout() {
   return request({
-    url: '/token/black/',
+    url: '/abp/manager/api/token/black/',
     method: 'get'
   })
 }
 
 export function getInfo() {
   return request({
-    url: '/system/user/info/',
+    url: '/abp/manager/api/system/user/info/',
     method: 'get'
   })
 }
 
 export function getUserList(query) {
   return request({
-    url: '/system/user/',
+    url: '/abp/manager/api/system/user/',
     method: 'get',
     params: query
   })
@@ -32,14 +32,14 @@ export function getUserList(query) {
 
 export function getUser(id) {
   return request({
-    url: `/system/user/${id}/`,
+    url: `/abp/manager/api/system/user/${id}/`,
     method: 'get'
   })
 }
 
 export function createUser(data) {
   return request({
-    url: '/system/user/',
+    url: '/abp/manager/api/system/user/',
     method: 'post',
     data
   })
@@ -47,7 +47,7 @@ export function createUser(data) {
 
 export function updateUser(id, data) {
   return request({
-    url: `/system/user/${id}/`,
+    url: `/abp/manager/api/system/user/${id}/`,
     method: 'put',
     data
   })
@@ -55,7 +55,7 @@ export function updateUser(id, data) {
 
 export function deleteUser(id, data) {
   return request({
-    url: `/system/user/${id}/`,
+    url: `/abp/manager/api/system/user/${id}/`,
     method: 'delete',
     data
   })
@@ -63,7 +63,7 @@ export function deleteUser(id, data) {
 
 export function changePassword(data) {
   return request({
-    url: '/system/user/password/',
+    url: '/abp/manager/api/system/user/password/',
     method: 'put',
     data
   })

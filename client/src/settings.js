@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: '管理系统',
+  title: '自动化管理平台',
 
   /**
    * @type {boolean} true | false
@@ -12,5 +12,5 @@ module.exports = {
    * @type {boolean} true | false
    * @description Whether show the logo in sidebar
    */
-  sidebarLogo: true
+  sidebarLogo: false
 }

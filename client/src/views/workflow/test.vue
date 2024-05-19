@@ -1,10 +1,10 @@
 <template>
-    <div id="container" style="border: 1px solid #000000;">
-        <svg width="900" height="1500">
-            <g />
-            <rect />
-        </svg>
-    </div>
+  <div id="container" style="border: 1px solid #000000;">
+    <svg width="900" height="1500">
+      <g />
+      <rect />
+    </svg>
+  </div>
 </template>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>

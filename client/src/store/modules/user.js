@@ -41,7 +41,7 @@ const actions = {
         commit('SET_TOKEN', data.access)
         setToken(data.access)
         resolve()
-    
+
       }).catch(error => {
         reject(error)
       })
@@ -55,7 +55,7 @@ const actions = {
         const { data } = response
 
         if (!data) {
-          reject('验证失败,重新登陆.')
+          reject('验证失败,重新登录.')
         }
 
         const { perms, name, avatar } = data
@@ -64,7 +64,7 @@ const actions = {
         if (!perms || perms.length <= 0) {
           reject('没有任何权限!')
         }
-        
+
         commit('SET_PERMS', perms)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)

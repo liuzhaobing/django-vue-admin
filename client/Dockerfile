@@ -4,3 +4,4 @@ COPY . .
 RUN npm install --registry=https://registry.npm.taobao.org && npm run build:prod
 FROM nginx:1.19.2-alpine
 COPY --from=builder /code/dist /usr/share/nginx/html
+COPY default.conf /etc/nginx/conf.d/default.conf

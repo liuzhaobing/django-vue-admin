@@ -4,128 +4,128 @@
       <el-col :md="6">
         <el-card>
           <div slot="header" class="clearfix">
-    <span>部门</span>
-  </div>
-        <el-input v-model="filterOrgText" placeholder="输入部门名进行过滤" />
+            <span>部门</span>
+          </div>
+          <el-input v-model="filterOrgText" placeholder="输入部门名进行过滤" />
 
-        <el-tree
-          ref="tree"
-          v-loading="treeLoding"
-          class="filter-tree"
-          :data="orgData"
-          default-expand-all
-          highlight-current
-          :expand-on-click-node="false"
-          :filter-node-method="filterNode"
-          style="margin-top:6px;"
-          @node-click="handleOrgClick"
-        />
+          <el-tree
+            ref="tree"
+            v-loading="treeLoding"
+            class="filter-tree"
+            :data="orgData"
+            default-expand-all
+            highlight-current
+            :expand-on-click-node="false"
+            :filter-node-method="filterNode"
+            style="margin-top:6px;"
+            @node-click="handleOrgClick"
+          />
         </el-card>
       </el-col>
       <el-col :md="18">
         <el-card>
           <div slot="header" class="clearfix">
-    <span>用户</span>
-  </div>
-        <div>
-          <el-select
-            v-model="listQuery.is_active"
-            placeholder="状态"
-            clearable
-            style="width: 90px"
-            class="filter-item"
-            @change="handleFilter"
-          >
-            <el-option
-              v-for="item in enabledOptions"
-              :key="item.key"
-              :label="item.display_name"
-              :value="item.key"
+            <span>用户</span>
+          </div>
+          <div>
+            <el-select
+              v-model="listQuery.is_active"
+              placeholder="状态"
+              clearable
+              style="width: 90px"
+              class="filter-item"
+              @change="handleFilter"
+            >
+              <el-option
+                v-for="item in enabledOptions"
+                :key="item.key"
+                :label="item.display_name"
+                :value="item.key"
+              />
+            </el-select>
+            <el-input
+              v-model="listQuery.name"
+              placeholder="姓名"
+              style="width: 200px;"
+              class="filter-item"
+              @keyup.enter.native="handleFilter"
             />
-          </el-select>
-          <el-input
-            v-model="listQuery.name"
-            placeholder="姓名"
-            style="width: 200px;"
-            class="filter-item"
-            @keyup.enter.native="handleFilter"
-          />
-          <el-button
-            class="filter-item"
-            type="primary"
-            icon="el-icon-search"
-            @click="handleFilter"
-            size="small"
-          >搜索</el-button>
-          <el-button
-            class="filter-item"
-            type="primary"
-            icon="el-icon-refresh-left"
-            @click="resetFilter"
-            size="small"
-          >重置</el-button>
-        </div>
-        <div style="margin-top:6px">
-          <el-button type="primary" icon="el-icon-plus" @click="handleAddUser" v-if="checkPermission(['user_create'])" size="small">新增</el-button>
-        </div>
-        <el-table
-          v-loading="listLoading"
-          :data="userList.results"
-          style="width: 100%;margin-top:6px;"
-          highlight-current-row
-          row-key="id"
-          height="100"
-          stripe
-          border
-          v-el-height-adaptive-table="{bottomOffset: 50}"
-        >
-          <el-table-column type="index" width="50" />
-          <el-table-column align="center" label="姓名">
-            <template slot-scope="scope">{{ scope.row.name }}</template>
-          </el-table-column>
-          <el-table-column align="header-center" label="账户">
-            <template slot-scope="scope">{{ scope.row.username }}</template>
-          </el-table-column>
-          <el-table-column align="header-center" label="部门">
-            <template
-              v-if="scope.row.dept_name != null"
-              slot-scope="scope"
-            >{{ scope.row.dept_name }}</template>
-          </el-table-column>
-          <el-table-column label="创建日期">
-            <template slot-scope="scope">
-              <span>{{ scope.row.date_joined }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column align="center" label="操作">
-            <template slot-scope="scope">
-              <el-button
-                v-if="!scope.row.is_superuser"
-                :disabled="!checkPermission(['user_update'])"
-                type="primary"
-                size="small"
-                icon="el-icon-edit"
-                @click="handleEdit(scope)"
-              />
-              <el-button
-                v-if="!scope.row.is_superuser"
-                :disabled="!checkPermission(['user_delete'])"
-                type="danger"
-                size="small"
-                icon="el-icon-delete"
-                @click="handleDelete(scope)"
-              />
-            </template>
-          </el-table-column>
-        </el-table>
+            <el-button
+              class="filter-item"
+              type="primary"
+              icon="el-icon-search"
+              size="small"
+              @click="handleFilter"
+            >搜索</el-button>
+            <el-button
+              class="filter-item"
+              type="primary"
+              icon="el-icon-refresh-left"
+              size="small"
+              @click="resetFilter"
+            >重置</el-button>
+          </div>
+          <div style="margin-top:6px">
+            <el-button v-if="checkPermission(['user_create'])" type="primary" icon="el-icon-plus" size="small" @click="handleAddUser">新增</el-button>
+          </div>
+          <el-table
+            v-loading="listLoading"
+            v-el-height-adaptive-table="{bottomOffset: 50}"
+            :data="userList.results"
+            style="width: 100%;margin-top:6px;"
+            highlight-current-row
+            row-key="id"
+            height="100"
+            stripe
+            border
+          >
+            <el-table-column type="index" width="50" />
+            <el-table-column align="center" label="姓名">
+              <template slot-scope="scope">{{ scope.row.name }}</template>
+            </el-table-column>
+            <el-table-column align="header-center" label="账户">
+              <template slot-scope="scope">{{ scope.row.username }}</template>
+            </el-table-column>
+            <el-table-column align="header-center" label="部门">
+              <template
+                v-if="scope.row.dept_name != null"
+                slot-scope="scope"
+              >{{ scope.row.dept_name }}</template>
+            </el-table-column>
+            <el-table-column label="创建日期">
+              <template slot-scope="scope">
+                <span>{{ scope.row.date_joined }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  v-if="!scope.row.is_superuser"
+                  :disabled="!checkPermission(['user_update'])"
+                  type="primary"
+                  size="small"
+                  icon="el-icon-edit"
+                  @click="handleEdit(scope)"
+                />
+                <el-button
+                  v-if="!scope.row.is_superuser"
+                  :disabled="!checkPermission(['user_delete'])"
+                  type="danger"
+                  size="small"
+                  icon="el-icon-delete"
+                  @click="handleDelete(scope)"
+                />
+              </template>
+            </el-table-column>
+          </el-table>
 
-        <pagination
-          v-show="userList.count>0"
-          :total="userList.count"
-          :page.sync="listQuery.page"
-          :limit.sync="listQuery.page_size"
-          @pagination="getList"
-        />
+          <pagination
+            v-show="userList.count>0"
+            :total="userList.count"
+            :page.sync="listQuery.page"
+            :limit.sync="listQuery.page_size"
+            @pagination="getList"
+          />
         </el-card>
       </el-col>
     </el-row>
@@ -139,7 +139,7 @@
           <el-input v-model="user.username" placeholder="账户" />
         </el-form-item>
         <el-form-item label="所属部门" prop="dept">
-          <treeselect v-model="user.dept" :multiple="false" :options="orgData" placeholder="所属部门"/>
+          <treeselect v-model="user.dept" :multiple="false" :options="orgData" placeholder="所属部门" />
         </el-form-item>
         <el-form-item label="角色" prop="roles">
           <el-select v-model="user.roles" multiple placeholder="请选择" style="width:100%">
@@ -161,7 +161,7 @@
             :before-upload="beforeAvatarUpload"
             :headers="upHeaders"
           >
-            <img v-if="user.avatar" :src="user.avatar" class="avatar" />
+            <img v-if="user.avatar" :src="user.avatar" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
         </el-form-item>
@@ -199,22 +199,22 @@
 }
 </style>
 <script>
-import { getUserList, createUser, deleteUser, updateUser } from "@/api/user";
-import { getOrgAll } from "@/api/org"
-import { getRoleAll } from "@/api/role"
-import { genTree } from "@/utils"
-import checkPermission from "@/utils/permission"
-import { upUrl, upHeaders } from "@/api/file"
-import Pagination from "@/components/Pagination" // secondary package based on el-pagination
+import { getUserList, createUser, deleteUser, updateUser } from '@/api/user'
+import { getOrgAll } from '@/api/org'
+import { getRoleAll } from '@/api/role'
+import { genTree } from '@/utils'
+import checkPermission from '@/utils/permission'
+import { upUrl, upHeaders } from '@/api/file'
+import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 const defaultUser = {
-  id: "",
-  name: "",
-  username: "",
+  id: '',
+  name: '',
+  username: '',
   dept: null,
-  avatar: "/media/default/avatar.png"
-};
+  avatar: '/media/default/avatar.png'
+}
 export default {
   components: { Pagination, Treeselect },
   data() {
@@ -222,7 +222,7 @@ export default {
       user: defaultUser,
       upHeaders: upHeaders(),
       upUrl: upUrl(),
-      userList: {count:0},
+      userList: { count: 0 },
       roles: [],
       listLoading: true,
       listQuery: {
@@ -230,149 +230,149 @@ export default {
         page_size: 20
       },
       enabledOptions: [
-        { key: "true", display_name: "激活" },
-        { key: "false", display_name: "禁用" }
+        { key: 'true', display_name: '激活' },
+        { key: 'false', display_name: '禁用' }
       ],
       dialogVisible: false,
-      dialogType: "new",
+      dialogType: 'new',
       rule1: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        username: [{ required: true, message: "请输入账号", trigger: "change" }]
+        name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+        username: [{ required: true, message: '请输入账号', trigger: 'change' }]
         // password: [
         //   { required: true, message: '请输入密码', trigger: 'change' }
         // ],
       },
-      filterOrgText: "",
+      filterOrgText: '',
       treeLoding: false,
       orgData: []
-    };
+    }
   },
   computed: {},
   watch: {
     filterOrgText(val) {
-      this.$refs.tree.filter(val);
+      this.$refs.tree.filter(val)
     }
   },
   created() {
-    this.getList();
-    this.getOrgAll();
-    this.getRoleAll();
+    this.getList()
+    this.getOrgAll()
+    this.getRoleAll()
   },
   methods: {
     checkPermission,
     handleAvatarSuccess(res, file) {
-        this.user.avatar = res.data.path
+      this.user.avatar = res.data.path
     },
     beforeAvatarUpload(file) {
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt2M = file.size / 1024 / 1024 < 2
       if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
+        this.$message.error('上传头像图片大小不能超过 2MB!')
       }
-      return isLt2M;
+      return isLt2M
     },
     filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      if (!value) return true
+      return data.label.indexOf(value) !== -1
     },
     handleOrgClick(obj, node, vue) {
-      this.listQuery.page = 1;
-      this.listQuery.dept = obj.id;
-      this.getList();
+      this.listQuery.page = 1
+      this.listQuery.dept = obj.id
+      this.getList()
     },
     getList() {
-      this.listLoading = true;
+      this.listLoading = true
       getUserList(this.listQuery).then(response => {
         if (response.data) {
           this.userList = response.data
         }
-        this.listLoading = false;
-      });
+        this.listLoading = false
+      })
     },
     getOrgAll() {
-      this.treeLoding = true;
+      this.treeLoding = true
       getOrgAll().then(response => {
-        this.orgData = genTree(response.data);
-        this.treeLoding = false;
-      });
+        this.orgData = genTree(response.data)
+        this.treeLoding = false
+      })
     },
     getRoleAll() {
       getRoleAll().then(response => {
-        this.roles = genTree(response.data);
-      });
+        this.roles = genTree(response.data)
+      })
     },
     resetFilter() {
       this.listQuery = {
         page: 1,
         page_size: 20
-      };
-      this.getList();
+      }
+      this.getList()
     },
     handleFilter() {
-      this.listQuery.page = 1;
-      this.getList();
+      this.listQuery.page = 1
+      this.getList()
     },
     handleAddUser() {
-      this.user = Object.assign({}, defaultUser);
-      this.dialogType = "new";
-      this.dialogVisible = true;
+      this.user = Object.assign({}, defaultUser)
+      this.dialogType = 'new'
+      this.dialogVisible = true
       this.$nextTick(() => {
-        this.$refs["Form"].clearValidate();
-      });
+        this.$refs['Form'].clearValidate()
+      })
     },
     handleEdit(scope) {
-      this.user = Object.assign({}, scope.row); // copy obj
-      this.dialogType = "edit";
-      this.dialogVisible = true;
+      this.user = Object.assign({}, scope.row) // copy obj
+      this.dialogType = 'edit'
+      this.dialogVisible = true
       this.$nextTick(() => {
-        this.$refs["Form"].clearValidate();
-      });
+        this.$refs['Form'].clearValidate()
+      })
     },
     handleDelete(scope) {
-      this.$confirm("确认删除?", "警告", {
-        confirmButtonText: "确认",
-        cancelButtonText: "取消",
-        type: "error"
+      this.$confirm('确认删除?', '警告', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'error'
       })
-        .then(async () => {
-          await deleteUser(scope.row.id);
-          this.userList.splice(scope.row.index, 1);
+        .then(async() => {
+          await deleteUser(scope.row.id)
+          this.userList.splice(scope.row.index, 1)
           this.$message({
-            type: "success",
-            message: "成功删除!"
-          });
+            type: 'success',
+            message: '成功删除!'
+          })
         })
         .catch(err => {
-          console.error(err);
-        });
+          console.error(err)
+        })
     },
     async confirm(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          const isEdit = this.dialogType === "edit";
+          const isEdit = this.dialogType === 'edit'
           if (isEdit) {
             updateUser(this.user.id, this.user).then(res => {
-                this.getList();
-                this.dialogVisible = false;
-                this.$message({
-                  message: "编辑成功",
-                  type: "success",
-                });
-            });
+              this.getList()
+              this.dialogVisible = false
+              this.$message({
+                message: '编辑成功',
+                type: 'success'
+              })
+            })
           } else {
             createUser(this.user).then(res => {
-                this.getList();
-                this.dialogVisible = false;
-                this.$message({
-                  message: "新增成功",
-                  type: "success"
-                });
-            });
+              this.getList()
+              this.dialogVisible = false
+              this.$message({
+                message: '新增成功',
+                type: 'success'
+              })
+            })
           }
         } else {
-          return false;
+          return false
         }
-      });
+      })
     }
   }
-};
+}
 </script>
