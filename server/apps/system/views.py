@@ -20,6 +20,8 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import ValidationError, ParseError
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from utils.queryset import get_child_queryset2
 
 from .filters import UserFilter
@@ -32,7 +34,7 @@ from .serializers import (DictSerializer, DictTypeSerializer, FileSerializer,
                           OrganizationSerializer, PermissionSerializer,
                           PositionSerializer, RoleSerializer, PTaskSerializer, PTaskCreateUpdateSerializer,
                           UserCreateSerializer, UserListSerializer,
-                          UserModifySerializer)
+                          UserModifySerializer, MyTokenObtainPairSerializer)
 
 logger = logging.getLogger('log')
 # logger.info('请求成功！ response_code:{}；response_headers:{}；response_body:{}'.format(response_code, response_headers, response_body[:251]))
@@ -362,3 +364,7 @@ class FileViewSet(CreateModelMixin, DestroyModelMixin, RetrieveModelMixin, ListM
         instance = serializer.save(create_by=self.request.user, name=name, size=size, type=tp, mime=mime)
         instance.path = settings.MEDIA_URL + instance.file.name
         instance.save()
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer

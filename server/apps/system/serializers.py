@@ -2,6 +2,7 @@ import re
 
 from django_celery_beat.models import PeriodicTask, CrontabSchedule, IntervalSchedule
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import (Dict, DictType, File, Organization, Permission, Position,
                      Role, User)
@@ -193,3 +194,12 @@ class UserCreateSerializer(serializers.ModelSerializer):
         if User.objects.filter(phone=phone):
             raise serializers.ValidationError('手机号已经被注册')
         return phone
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['username'] = user.username
+        token['name'] = user.name
+        return token

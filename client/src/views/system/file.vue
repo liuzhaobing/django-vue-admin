@@ -75,8 +75,8 @@
       <el-table-column align="header-center" label="格式">
         <template slot-scope="scope">{{ scope.row.mime }}</template>
       </el-table-column>
-      <el-table-column align="header-center" label="大小(KB)">
-        <template slot-scope="scope">{{ (scope.row.size / 1024).toFixed(1) }}</template>
+      <el-table-column align="header-center" label="大小">
+        <template slot-scope="scope">{{ formatFileSize(scope.row.size) }}</template>
       </el-table-column>
       <el-table-column align="header-center" label="地址">
         <template slot-scope="scope">{{ scope.row.path }}</template>
@@ -135,6 +135,15 @@ export default {
     this.getList()
   },
   methods: {
+    formatFileSize(sizeInBytes) {
+      const units = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+      let unitIndex = 0
+      while (sizeInBytes >= 1024 && unitIndex < units.length - 1) {
+        sizeInBytes /= 1024
+        unitIndex++
+      }
+      return `${sizeInBytes.toFixed(1)} ${units[unitIndex]}`
+    },
     deleteOneFile(row) {
       this.$confirm('确认删除?', '警告', {
         confirmButtonText: '确认',
