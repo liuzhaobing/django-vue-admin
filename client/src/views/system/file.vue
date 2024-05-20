@@ -1,11 +1,12 @@
 <template>
   <div class="app-container">
-    <div>
+    <div class="file-view-header">
       <el-select
         v-model="listQuery.type"
         placeholder="文件类型"
         clearable
         style="width: 200px"
+        size="mini"
         class="filter-item"
         @change="handleFilter"
       >
@@ -20,6 +21,7 @@
         v-model="listQuery.search"
         placeholder="文件名"
         style="width: 300px;"
+        size="mini"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -27,29 +29,41 @@
         class="filter-item"
         type="primary"
         icon="el-icon-search"
-        size="small"
+        size="mini"
         @click="handleFilter"
       >搜索</el-button>
       <el-button
         class="filter-item"
         type="primary"
         icon="el-icon-refresh-left"
-        size="small"
+        size="mini"
         @click="resetFilter"
       >重置</el-button>
+      <el-upload
+        ref="upload"
+        class="upload"
+        :action="upUrl"
+        :headers="upHeaders"
+        :on-success="getList"
+        :show-file-list="false"
+        :limit="1"
+        accept=".xls,.xlsx"
+      >
+        <el-button type="primary" icon="el-icon-upload2" size="mini">文件上传</el-button>
+      </el-upload>
     </div>
     <el-table
       v-loading="listLoading"
       v-el-height-adaptive-table="{bottomOffset: 50}"
       :data="fileList.results"
-      style="width: 100%;margin-top:10px;"
+      style="width: 100%;"
       highlight-current-row
       row-key="id"
       height="100"
       stripe
       border
     >
-      <el-table-column type="index" width="50" />
+      <el-table-column type="index" width="50" label="#" />
       <el-table-column align="center" label="名称">
         <template slot-scope="scope">
           <el-link type="primary" :href="scope.row.file" target="_blank">{{ scope.row.name }}</el-link>
@@ -61,8 +75,8 @@
       <el-table-column align="header-center" label="格式">
         <template slot-scope="scope">{{ scope.row.mime }}</template>
       </el-table-column>
-      <el-table-column align="header-center" label="大小(B)">
-        <template slot-scope="scope">{{ scope.row.size }}</template>
+      <el-table-column align="header-center" label="大小(KB)">
+        <template slot-scope="scope">{{ (scope.row.size / 1024).toFixed(1) }}</template>
       </el-table-column>
       <el-table-column align="header-center" label="地址">
         <template slot-scope="scope">{{ scope.row.path }}</template>
@@ -70,6 +84,16 @@
       <el-table-column label="上传日期">
         <template slot-scope="scope">
           <span>{{ scope.row.create_time }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button
+            type="danger"
+            size="mini"
+            icon="el-icon-delete"
+            @click="deleteOneFile(scope.row)"
+          />
         </template>
       </el-table-column>
     </el-table>
@@ -84,12 +108,14 @@
   </div>
 </template>
 <script>
-import { getFileList } from '@/api/file'
+import { getFileList, upHeaders, upUrl, deleteFile } from '@/api/file'
 import Pagination from '@/components/Pagination'
 export default {
   components: { Pagination },
   data() {
     return {
+      upUrl: upUrl(),
+      upHeaders: upHeaders(),
       fileList: { count: 0 },
       listLoading: true,
       listQuery: {
@@ -109,6 +135,21 @@ export default {
     this.getList()
   },
   methods: {
+    deleteOneFile(row) {
+      this.$confirm('确认删除?', '警告', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'error'
+      })
+        .then(async() => {
+          await deleteFile(row.id)
+          this.getList()
+          this.$message({
+            type: 'success',
+            message: '成功删除!'
+          })
+        })
+    },
     getList() {
       this.listLoading = true
       getFileList(this.listQuery).then(response => {
@@ -132,3 +173,16 @@ export default {
   }
 }
 </script>
+<style scoped>
+.file-view-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.file-view-header > *:not(:last-child) {
+  margin-right: 10px;
+}
+.app-container > *:not(:last-child) {
+  margin-top: 10px;
+}
+</style>

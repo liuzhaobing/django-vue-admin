@@ -48,14 +48,14 @@
         <template slot-scope="scope">
           <el-button
             type="primary"
-            size="small"
+            size="mini"
             icon="el-icon-edit"
             :disabled="!checkPermission(['perm_update'])"
             @click="handleEdit(scope)"
           />
           <el-button
             type="danger"
-            size="small"
+            size="mini"
             icon="el-icon-delete"
             :disabled="!checkPermission(['perm_delete'])"
             @click="handleDelete(scope)"

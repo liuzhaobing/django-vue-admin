@@ -27,14 +27,14 @@
         class="filter-item"
         type="primary"
         icon="el-icon-search"
-        size="small"
+        size="mini"
         @click="handleFilter"
       >搜索</el-button>
       <el-button
         class="filter-item"
         type="primary"
         icon="el-icon-refresh-left"
-        size="small"
+        size="mini"
         @click="resetFilter"
       >重置</el-button>
     </div>
@@ -43,7 +43,7 @@
         v-if="checkPermission(['task_create'])"
         type="primary"
         icon="el-icon-plus"
-        size="small"
+        size="mini"
         @click="handleCreate"
       >新增</el-button>
     </div>
@@ -87,13 +87,13 @@
         <template slot-scope="scope">
           <el-button
             type="primary"
-            size="small"
+            size="mini"
             :disabled="!checkPermission(['task_update'])"
             @click="handleUpdate(scope)"
           >编辑</el-button>
           <el-button
             type="danger"
-            size="small"
+            size="mini"
             :disabled="!checkPermission(['task_delete'])"
             @click="handleDelete(scope)"
           >删除</el-button>

@@ -1,7 +1,4 @@
-
 from rest_framework import serializers
-
-
 
 # class TreeSerializer(serializers.Serializer):
 #     id = serializers.IntegerField()

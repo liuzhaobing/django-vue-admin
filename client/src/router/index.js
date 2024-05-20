@@ -83,6 +83,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/workflow/index',
     name: 'workflow',
+    alwaysShow: true,
     meta: { title: '工作流', icon: 'example', perms: ['workflow_manage'] },
     children: [
       {
@@ -128,10 +129,27 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/resource',
+    component: Layout,
+    redirect: '/resource/file',
+    name: 'Resource',
+    alwaysShow: true,
+    meta: { title: '资源管理', icon: 'example', perms: ['resource_manage'] },
+    children: [
+      {
+        path: 'file',
+        name: 'File',
+        component: () => import('@/views/system/file'),
+        meta: { title: '文件库', icon: 'documentation', perms: ['file_room'] }
+      }
+    ]
+  },
+  {
     path: '/system',
     component: Layout,
     redirect: '/system/user',
     name: 'System',
+    alwaysShow: true,
     meta: { title: '系统管理', icon: 'example', perms: ['system_manage'] },
     children: [
       {
@@ -158,18 +176,12 @@ export const asyncRoutes = [
         component: () => import('@/views/system/position'),
         meta: { title: '岗位管理', icon: 'position', perms: ['position_manage'] }
       },
-      {
-        path: 'dict',
-        name: 'Dict',
-        component: () => import('@/views/system/dict'),
-        meta: { title: '数据字典', icon: 'example', perms: ['dict_manage'] }
-      },
-      {
-        path: 'file',
-        name: 'File',
-        component: () => import('@/views/system/file'),
-        meta: { title: '文件库', icon: 'documentation', perms: ['file_room'] }
-      },
+      // {
+      //   path: 'dict',
+      //   name: 'Dict',
+      //   component: () => import('@/views/system/dict'),
+      //   meta: { title: '数据字典', icon: 'example', perms: ['dict_manage'] }
+      // },
       {
         path: 'task',
         name: 'Task',
@@ -183,6 +195,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/monitor/service',
     name: 'Monitor',
+    alwaysShow: true,
     meta: { title: '系统监控', icon: 'example', perms: ['monitor_set'] },
     children: [
       {
@@ -198,6 +211,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/develop/perm',
     name: 'Develop',
+    alwaysShow: true,
     meta: { title: '开发配置', icon: 'example', perms: ['dev_set'] },
     children: [
       {

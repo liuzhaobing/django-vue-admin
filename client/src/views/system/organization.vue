@@ -12,7 +12,7 @@
         v-if="checkPermission(['org_create'])"
         type="primary"
         icon="el-icon-plus"
-        size="small"
+        size="mini"
         @click="handleAdd"
       >新增</el-button>
     </div>
@@ -48,7 +48,7 @@
           <el-button
             v-if="scope.row.type === '部门'"
             type="primary"
-            size="small"
+            size="mini"
             icon="el-icon-edit"
             :disabled="!checkPermission(['org_update'])"
             @click="handleEdit(scope)"
@@ -56,7 +56,7 @@
           <el-button
             v-if="scope.row.type === '部门'"
             type="danger"
-            size="small"
+            size="mini"
             icon="el-icon-delete"
             :disabled="!checkPermission(['org_delete'])"
             @click="handleDelete(scope)"

@@ -1,7 +1,7 @@
 from django.urls import path, include
-from .views import TaskList, UserViewSet, OrganizationViewSet, PermissionViewSet, RoleViewSet, PositionViewSet, TestView, DictTypeViewSet, DictViewSet, PTaskViewSet
+from .views import TaskList, UserViewSet, OrganizationViewSet, PermissionViewSet, RoleViewSet, PositionViewSet, \
+    TestView, DictTypeViewSet, DictViewSet, PTaskViewSet
 from rest_framework import routers
-
 
 router = routers.DefaultRouter()
 router.register('user', UserViewSet, basename="user")

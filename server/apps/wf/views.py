@@ -8,8 +8,13 @@ from apps.wf.filters import TicketFilterSet
 from django.core.exceptions import AppRegistryNotReady
 from rest_framework.response import Response
 from rest_framework import serializers
-from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
-from apps.wf.serializers import CustomFieldCreateUpdateSerializer, CustomFieldSerializer, StateSerializer, TicketAddNodeEndSerializer, TicketAddNodeSerializer, TicketCloseSerializer, TicketCreateSerializer, TicketDestorySerializer, TicketFlowSerializer, TicketFlowSimpleSerializer, TicketHandleSerializer, TicketRetreatSerializer, TicketSerializer, TransitionSerializer, WorkflowSerializer, TicketListSerializer, TicketDetailSerializer
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, ListModelMixin, RetrieveModelMixin, \
+    UpdateModelMixin
+from apps.wf.serializers import CustomFieldCreateUpdateSerializer, CustomFieldSerializer, StateSerializer, \
+    TicketAddNodeEndSerializer, TicketAddNodeSerializer, TicketCloseSerializer, TicketCreateSerializer, \
+    TicketDestorySerializer, TicketFlowSerializer, TicketFlowSimpleSerializer, TicketHandleSerializer, \
+    TicketRetreatSerializer, TicketSerializer, TransitionSerializer, WorkflowSerializer, TicketListSerializer, \
+    TicketDetailSerializer
 from django.shortcuts import get_object_or_404, render
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.decorators import action, api_view
@@ -30,6 +35,7 @@ class FromCodeListView(APIView):
         """
         return Response(GetParticipants.all_funcs)
 
+
 class WorkflowViewSet(CreateUpdateModelAMixin, ModelViewSet):
     perms_map = {'get': '*', 'post': 'workflow_create',
                  'put': 'workflow_update', 'delete': 'workflow_delete'}
@@ -38,9 +44,10 @@ class WorkflowViewSet(CreateUpdateModelAMixin, ModelViewSet):
     search_fields = ['name', 'description']
     filterset_fields = []
     ordering_fields = ['create_time']
-    ordering = ['-create_time']    
+    ordering = ['-create_time']
 
-    @action(methods=['get'], detail=True, perms_map={'get':'workflow_update'}, pagination_class=None, serializer_class=StateSerializer)
+    @action(methods=['get'], detail=True, perms_map={'get': 'workflow_update'}, pagination_class=None,
+            serializer_class=StateSerializer)
     def states(self, request, pk=None):
         """
         工作流下的状态节点
@@ -48,8 +55,9 @@ class WorkflowViewSet(CreateUpdateModelAMixin, ModelViewSet):
         wf = self.get_object()
         serializer = self.serializer_class(instance=WfService.get_worlflow_states(wf), many=True)
         return Response(serializer.data)
-    
-    @action(methods=['get'], detail=True, perms_map={'get':'workflow_update'}, pagination_class=None, serializer_class=TransitionSerializer)
+
+    @action(methods=['get'], detail=True, perms_map={'get': 'workflow_update'}, pagination_class=None,
+            serializer_class=TransitionSerializer)
     def transitions(self, request, pk=None):
         """
         工作流下的流转规则
@@ -57,22 +65,24 @@ class WorkflowViewSet(CreateUpdateModelAMixin, ModelViewSet):
         wf = self.get_object()
         serializer = self.serializer_class(instance=WfService.get_workflow_transitions(wf), many=True)
         return Response(serializer.data)
-    
-    @action(methods=['get'], detail=True, perms_map={'get':'workflow_update'}, pagination_class=None, serializer_class=CustomFieldSerializer)
+
+    @action(methods=['get'], detail=True, perms_map={'get': 'workflow_update'}, pagination_class=None,
+            serializer_class=CustomFieldSerializer)
     def customfields(self, request, pk=None):
         """
         工作流下的自定义字段
         """
         wf = self.get_object()
-        serializer = self.serializer_class(instance=CustomField.objects.filter(workflow=wf, is_deleted=False).order_by('sort'), many=True)
+        serializer = self.serializer_class(
+            instance=CustomField.objects.filter(workflow=wf, is_deleted=False).order_by('sort'), many=True)
         return Response(serializer.data)
-    
-    @action(methods=['get'], detail=True, perms_map={'get':'workflow_init'})
+
+    @action(methods=['get'], detail=True, perms_map={'get': 'workflow_init'})
     def init(self, request, pk=None):
         """
         新建工单初始化
         """
-        ret={}
+        ret = {}
         wf = self.get_object()
         start_state = WfService.get_workflow_start_state(wf)
         transitions = WfService.get_state_transitions(start_state)
@@ -87,27 +97,30 @@ class WorkflowViewSet(CreateUpdateModelAMixin, ModelViewSet):
         ret['field_list'] = field_list
         return Response(ret)
 
+
 class StateViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, DestroyModelMixin, GenericViewSet):
-    perms_map = {'get':'*', 'post':'workflow_update',
-                'put':'workflow_update', 'delete':'workflow_update'}
+    perms_map = {'get': '*', 'post': 'workflow_update',
+                 'put': 'workflow_update', 'delete': 'workflow_update'}
     queryset = State.objects.all()
     serializer_class = StateSerializer
     search_fields = ['name']
     filterset_fields = ['workflow']
     ordering = ['sort']
 
+
 class TransitionViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, DestroyModelMixin, GenericViewSet):
-    perms_map = {'get':'*', 'post':'workflow_update',
-                'put':'workflow_update', 'delete':'workflow_update'}
+    perms_map = {'get': '*', 'post': 'workflow_update',
+                 'put': 'workflow_update', 'delete': 'workflow_update'}
     queryset = Transition.objects.all()
     serializer_class = TransitionSerializer
     search_fields = ['name']
     filterset_fields = ['workflow']
     ordering = ['id']
 
+
 class CustomFieldViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, DestroyModelMixin, GenericViewSet):
-    perms_map = {'get':'*', 'post':'workflow_update',
-                'put':'workflow_update', 'delete':'workflow_update'}
+    perms_map = {'get': '*', 'post': 'workflow_update',
+                 'put': 'workflow_update', 'delete': 'workflow_update'}
     queryset = CustomField.objects.all()
     serializer_class = CustomFieldSerializer
     search_fields = ['field_name']
@@ -119,8 +132,10 @@ class CustomFieldViewSet(CreateModelMixin, UpdateModelMixin, RetrieveModelMixin,
             return CustomFieldCreateUpdateSerializer
         return super().get_serializer_class()
 
-class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    perms_map = {'get':'*', 'post':'ticket_create'}
+
+class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin, ListModelMixin, RetrieveModelMixin,
+                    GenericViewSet):
+    perms_map = {'get': '*', 'post': 'ticket_create'}
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     search_fields = ['title']
@@ -139,7 +154,7 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
         elif self.action == 'retrieve':
             return TicketDetailSerializer
         return super().get_serializer_class()
-    
+
     def filter_queryset(self, queryset):
         if not self.detail and not self.request.query_params.get('category', None):
             raise APIException('请指定查询分类')
@@ -153,7 +168,7 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
         rdata = request.data
         serializer = self.get_serializer(data=rdata)
         serializer.is_valid(raise_exception=True)
-        vdata = serializer.validated_data #校验之后的数据
+        vdata = serializer.validated_data  # 校验之后的数据
         start_state = WfService.get_workflow_start_state(vdata['workflow'])
         transition = vdata.pop('transition')
         ticket_data = vdata['ticket_data']
@@ -161,7 +176,7 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
         save_ticket_data = {}
         # 校验必填项
         if transition.field_require_check:
-            for key, value in start_state.state_fields.items(): 
+            for key, value in start_state.state_fields.items():
                 if int(value) == State.STATE_FIELD_REQUIRED:
                     if key not in ticket_data and not ticket_data[key]:
                         raise APIException('字段{}必填'.format(key))
@@ -169,39 +184,39 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
                 elif int(value) == State.STATE_FIELD_OPTIONAL:
                     save_ticket_data[key] = ticket_data[key]
 
-        ticket = serializer.save(state=start_state, 
-        create_by=request.user, 
-        create_time=timezone.now(),
-        act_state=Ticket.TICKET_ACT_STATE_DRAFT, 
-        belong_dept=request.user.dept,
-        ticket_data=save_ticket_data) # 先创建出来
+        ticket = serializer.save(state=start_state,
+                                 create_by=request.user,
+                                 create_time=timezone.now(),
+                                 act_state=Ticket.TICKET_ACT_STATE_DRAFT,
+                                 belong_dept=request.user.dept,
+                                 ticket_data=save_ticket_data)  # 先创建出来
         # 更新title和sn
         title = vdata.get('title', '')
         title_template = ticket.workflow.title_template
         if title_template:
             all_ticket_data = {**rdata, **ticket_data}
             title = title_template.format(**all_ticket_data)
-        sn = WfService.get_ticket_sn(ticket.workflow) # 流水号
+        sn = WfService.get_ticket_sn(ticket.workflow)  # 流水号
         ticket.sn = sn
         ticket.title = title
         ticket.save()
-        ticket = WfService.handle_ticket(ticket=ticket, transition=transition, new_ticket_data=ticket_data, 
-        handler=request.user, created=True)
+        ticket = WfService.handle_ticket(ticket=ticket, transition=transition, new_ticket_data=ticket_data,
+                                         handler=request.user, created=True)
         return Response(TicketSerializer(instance=ticket).data)
 
-    @action(methods=['get'], detail=False, perms_map={'get':'*'})
+    @action(methods=['get'], detail=False, perms_map={'get': '*'})
     def duty_agg(self, request, pk=None):
         """
         工单待办聚合
         """
         ret = {}
-        queryset = Ticket.objects.filter(participant__contains=request.user.id, is_deleted=False)\
+        queryset = Ticket.objects.filter(participant__contains=request.user.id, is_deleted=False) \
             .exclude(act_state__in=[Ticket.TICKET_ACT_STATE_FINISH, Ticket.TICKET_ACT_STATE_CLOSED])
         ret['total_count'] = queryset.count()
-        ret['details'] = list(queryset.values('workflow', 'workflow__name').annotate(count = Count('workflow')))
+        ret['details'] = list(queryset.values('workflow', 'workflow__name').annotate(count=Count('workflow')))
         return Response(ret)
 
-    @action(methods=['post'], detail=True, perms_map={'post':'*'})
+    @action(methods=['post'], detail=True, perms_map={'post': '*'})
     @transaction.atomic
     def handle(self, request, pk=None):
         """
@@ -214,12 +229,12 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
         new_ticket_data = ticket.ticket_data
         new_ticket_data.update(**vdata['ticket_data'])
 
-        ticket = WfService.handle_ticket(ticket=ticket, transition=vdata['transition'], 
-        new_ticket_data=new_ticket_data, handler=request.user, suggestion=vdata['suggestion'])
+        ticket = WfService.handle_ticket(ticket=ticket, transition=vdata['transition'],
+                                         new_ticket_data=new_ticket_data, handler=request.user,
+                                         suggestion=vdata['suggestion'])
         return Response(TicketSerializer(instance=ticket).data)
-        
 
-    @action(methods=['get'], detail=True, perms_map={'get':'*'})
+    @action(methods=['get'], detail=True, perms_map={'get': '*'})
     def flowsteps(self, request, pk=None):
         """
         工单流转step, 用于显示当前状态的step图(线性结构)
@@ -228,7 +243,7 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
         steps = WfService.get_ticket_steps(ticket)
         return Response(StateSerializer(instance=steps, many=True).data)
 
-    @action(methods=['get'], detail=True, perms_map={'get':'*'})
+    @action(methods=['get'], detail=True, perms_map={'get': '*'})
     def flowlogs(self, request, pk=None):
         """
         工单流转记录
@@ -237,8 +252,8 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
         flowlogs = TicketFlow.objects.filter(ticket=ticket).order_by('-create_time')
         serializer = TicketFlowSerializer(instance=flowlogs, many=True)
         return Response(serializer.data)
-    
-    @action(methods=['get'], detail=True, perms_map={'get':'*'})
+
+    @action(methods=['get'], detail=True, perms_map={'get': '*'})
     def transitions(self, request, pk=None):
         """
         获取工单可执行的操作
@@ -247,7 +262,7 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
         transitions = WfService.get_ticket_transitions(ticket)
         return Response(TransitionSerializer(instance=transitions, many=True).data)
 
-    @action(methods=['post'], detail=True, perms_map={'post':'*'})
+    @action(methods=['post'], detail=True, perms_map={'post': '*'})
     def accpet(self, request, pk=None):
         """
         接单,当工单当前处理人实际为多个人时(角色、部门、多人都有可能， 注意角色和部门有可能实际只有一人)
@@ -260,14 +275,16 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
             ticket.save()
             # 接单日志
             # 更新工单流转记录
-            TicketFlow.objects.create(ticket=ticket, state=ticket.state, ticket_data=WfService.get_ticket_all_field_value(ticket),
-                        suggestion='', participant_type=State.PARTICIPANT_TYPE_PERSONAL, intervene_type=Transition.TRANSITION_ATTRIBUTE_TYPE_ACCEPT,
-                        participant=request.user, transition=None)
+            TicketFlow.objects.create(ticket=ticket, state=ticket.state,
+                                      ticket_data=WfService.get_ticket_all_field_value(ticket),
+                                      suggestion='', participant_type=State.PARTICIPANT_TYPE_PERSONAL,
+                                      intervene_type=Transition.TRANSITION_ATTRIBUTE_TYPE_ACCEPT,
+                                      participant=request.user, transition=None)
             return Response()
         else:
             raise APIException('无需接单')
-    
-    @action(methods=['post'], detail=True, perms_map={'post':'*'})
+
+    @action(methods=['post'], detail=True, perms_map={'post': '*'})
     def retreat(self, request, pk=None):
         """
         撤回工单，允许创建人在指定状态撤回工单至初始状态，状态设置中开启允许撤回
@@ -284,13 +301,15 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
         ticket.act_state = Ticket.TICKET_ACT_STATE_RETREAT
         ticket.save()
         # 更新流转记录
-        suggestion = request.data.get('suggestion', '') # 撤回原因
-        TicketFlow.objects.create(ticket=ticket, state=ticket.state, ticket_data=WfService.get_ticket_all_field_value(ticket),
-                        suggestion=suggestion, participant_type=State.PARTICIPANT_TYPE_PERSONAL, intervene_type=Transition.TRANSITION_INTERVENE_TYPE_RETREAT,
-                        participant=request.user, transition=None)
+        suggestion = request.data.get('suggestion', '')  # 撤回原因
+        TicketFlow.objects.create(ticket=ticket, state=ticket.state,
+                                  ticket_data=WfService.get_ticket_all_field_value(ticket),
+                                  suggestion=suggestion, participant_type=State.PARTICIPANT_TYPE_PERSONAL,
+                                  intervene_type=Transition.TRANSITION_INTERVENE_TYPE_RETREAT,
+                                  participant=request.user, transition=None)
         return Response()
-    
-    @action(methods=['post'], detail=True, perms_map={'post':'*'}, serializer_class=TicketAddNodeSerializer)
+
+    @action(methods=['post'], detail=True, perms_map={'post': '*'}, serializer_class=TicketAddNodeSerializer)
     def add_node(self, request, pk=None):
         """
         加签
@@ -304,13 +323,15 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
         ticket.add_node_man = request.user
         ticket.save()
         # 更新流转记录
-        suggestion = request.data.get('suggestion', '') # 加签说明
-        TicketFlow.objects.create(ticket=ticket, state=ticket.state, ticket_data=WfService.get_ticket_all_field_value(ticket),
-                        suggestion=suggestion, participant_type=State.PARTICIPANT_TYPE_PERSONAL, intervene_type=Transition.TRANSITION_INTERVENE_TYPE_ADD_NODE,
-                        participant=request.user, transition=None)
+        suggestion = request.data.get('suggestion', '')  # 加签说明
+        TicketFlow.objects.create(ticket=ticket, state=ticket.state,
+                                  ticket_data=WfService.get_ticket_all_field_value(ticket),
+                                  suggestion=suggestion, participant_type=State.PARTICIPANT_TYPE_PERSONAL,
+                                  intervene_type=Transition.TRANSITION_INTERVENE_TYPE_ADD_NODE,
+                                  participant=request.user, transition=None)
         return Response()
 
-    @action(methods=['post'], detail=True, perms_map={'post':'*'}, serializer_class=TicketAddNodeEndSerializer)
+    @action(methods=['post'], detail=True, perms_map={'post': '*'}, serializer_class=TicketAddNodeEndSerializer)
     def add_node_end(self, request, pk=None):
         """
         加签完成
@@ -322,20 +343,21 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
         ticket.add_node_man = None
         ticket.save()
         # 更新流转记录
-        suggestion = request.data.get('suggestion', '') # 加签意见
-        TicketFlow.objects.create(ticket=ticket, state=ticket.state, ticket_data=WfService.get_ticket_all_field_value(ticket),
-                        suggestion=suggestion, participant_type=State.PARTICIPANT_TYPE_PERSONAL, intervene_type=Transition.TRANSITION_INTERVENE_TYPE_ADD_NODE_END,
-                        participant=request.user, transition=None)
+        suggestion = request.data.get('suggestion', '')  # 加签意见
+        TicketFlow.objects.create(ticket=ticket, state=ticket.state,
+                                  ticket_data=WfService.get_ticket_all_field_value(ticket),
+                                  suggestion=suggestion, participant_type=State.PARTICIPANT_TYPE_PERSONAL,
+                                  intervene_type=Transition.TRANSITION_INTERVENE_TYPE_ADD_NODE_END,
+                                  participant=request.user, transition=None)
         return Response()
-    
 
-    @action(methods=['post'], detail=True, perms_map={'post':'*'}, serializer_class=TicketCloseSerializer)
+    @action(methods=['post'], detail=True, perms_map={'post': '*'}, serializer_class=TicketCloseSerializer)
     def close(self, request, pk=None):
         """
         关闭工单(创建人在初始状态)
         """
         ticket = self.get_object()
-        if ticket.state.type == State.STATE_TYPE_START and ticket.create_by==request.user:
+        if ticket.state.type == State.STATE_TYPE_START and ticket.create_by == request.user:
             end_state = WfService.get_workflow_end_state(ticket.workflow)
             ticket.state = end_state
             ticket.participant_type = 0
@@ -343,15 +365,18 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
             ticket.act_state = Ticket.TICKET_ACT_STATE_CLOSED
             ticket.save()
             # 更新流转记录
-            suggestion = request.data.get('suggestion', '') # 关闭原因
-            TicketFlow.objects.create(ticket=ticket, state=ticket.state, ticket_data=WfService.get_ticket_all_field_value(ticket),
-                            suggestion=suggestion, participant_type=State.PARTICIPANT_TYPE_PERSONAL, intervene_type=Transition.TRANSITION_INTERVENE_TYPE_CLOSE,
-                            participant=request.user, transition=None)
+            suggestion = request.data.get('suggestion', '')  # 关闭原因
+            TicketFlow.objects.create(ticket=ticket, state=ticket.state,
+                                      ticket_data=WfService.get_ticket_all_field_value(ticket),
+                                      suggestion=suggestion, participant_type=State.PARTICIPANT_TYPE_PERSONAL,
+                                      intervene_type=Transition.TRANSITION_INTERVENE_TYPE_CLOSE,
+                                      participant=request.user, transition=None)
             return Response()
         else:
             return Response('工单不可关闭', status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=['post'], detail=False, perms_map={'post':'ticket_deletes'}, serializer_class=TicketDestorySerializer)
+    @action(methods=['post'], detail=False, perms_map={'post': 'ticket_deletes'},
+            serializer_class=TicketDestorySerializer)
     def destory(self, request, pk=None):
         """
         批量物理删除
@@ -360,12 +385,11 @@ class TicketViewSet(OptimizationMixin, CreateUpdateCustomMixin, CreateModelMixin
         return Response()
 
 
-
 class TicketFlowViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     """
     工单日志
     """
-    perms_map = {'get':'*'}
+    perms_map = {'get': '*'}
     queryset = TicketFlow.objects.all()
     serializer_class = TicketFlowSerializer
     search_fields = ['suggestion']

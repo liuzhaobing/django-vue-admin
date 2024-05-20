@@ -47,7 +47,7 @@
             <span>字典详情</span>
           </div>
           <div>
-            <el-button v-show="listQuery.type" v-if="checkPermission(['dic_create'])" type="primary" icon="el-icon-plus" size="small" @click="handleAddDict">新增</el-button>
+            <el-button v-show="listQuery.type" v-if="checkPermission(['dic_create'])" type="primary" icon="el-icon-plus" size="mini" @click="handleAddDict">新增</el-button>
           </div>
           <el-table
             v-show="listQuery.type"
@@ -86,7 +86,7 @@
                   v-if="!scope.row.is_superuser"
                   :disabled="!checkPermission(['dict_update'])"
                   type="primary"
-                  size="small"
+                  size="mini"
                   icon="el-icon-edit"
                   @click="handleEdit(scope)"
                 />
@@ -94,7 +94,7 @@
                 v-if="!scope.row.is_superuser"
                 :disabled="!checkPermission(['dict_delete'])"
                 type="danger"
-                size="small"
+                size="mini"
                 icon="el-icon-delete"
                 @click="handleDelete(scope)"
               /> -->

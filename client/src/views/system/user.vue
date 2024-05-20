@@ -54,19 +54,17 @@
               class="filter-item"
               type="primary"
               icon="el-icon-search"
-              size="small"
+              size="mini"
               @click="handleFilter"
             >搜索</el-button>
             <el-button
               class="filter-item"
               type="primary"
               icon="el-icon-refresh-left"
-              size="small"
+              size="mini"
               @click="resetFilter"
             >重置</el-button>
-          </div>
-          <div style="margin-top:6px">
-            <el-button v-if="checkPermission(['user_create'])" type="primary" icon="el-icon-plus" size="small" @click="handleAddUser">新增</el-button>
+            <el-button v-if="checkPermission(['user_create'])" type="primary" icon="el-icon-plus" size="mini" @click="handleAddUser">新增</el-button>
           </div>
           <el-table
             v-loading="listLoading"
@@ -80,11 +78,11 @@
             border
           >
             <el-table-column type="index" width="50" />
+            <el-table-column align="header-center" label="账号">
+              <template slot-scope="scope">{{ scope.row.username }}</template>
+            </el-table-column>
             <el-table-column align="center" label="姓名">
               <template slot-scope="scope">{{ scope.row.name }}</template>
-            </el-table-column>
-            <el-table-column align="header-center" label="账户">
-              <template slot-scope="scope">{{ scope.row.username }}</template>
             </el-table-column>
             <el-table-column align="header-center" label="部门">
               <template
@@ -92,9 +90,9 @@
                 slot-scope="scope"
               >{{ scope.row.dept_name }}</template>
             </el-table-column>
-            <el-table-column label="创建日期">
+            <el-table-column label="邮箱">
               <template slot-scope="scope">
-                <span>{{ scope.row.date_joined }}</span>
+                <span>{{ scope.row.email }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
@@ -103,7 +101,7 @@
                   v-if="!scope.row.is_superuser"
                   :disabled="!checkPermission(['user_update'])"
                   type="primary"
-                  size="small"
+                  size="mini"
                   icon="el-icon-edit"
                   @click="handleEdit(scope)"
                 />
@@ -111,7 +109,7 @@
                   v-if="!scope.row.is_superuser"
                   :disabled="!checkPermission(['user_delete'])"
                   type="danger"
-                  size="small"
+                  size="mini"
                   icon="el-icon-delete"
                   @click="handleDelete(scope)"
                 />
@@ -132,11 +130,17 @@
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'编辑用户':'新增用户'">
       <el-form ref="Form" :model="user" label-width="80px" label-position="right" :rules="rule1">
+        <el-form-item label="账号" prop="username">
+          <el-input v-model="user.username" placeholder="账号/工号" />
+        </el-form-item>
         <el-form-item label="姓名" prop="name">
           <el-input v-model="user.name" placeholder="姓名" />
         </el-form-item>
-        <el-form-item label="账户" prop="username">
-          <el-input v-model="user.username" placeholder="账户" />
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="user.phone" placeholder="手机号" />
+        </el-form-item>
+        <el-form-item label="邮箱地址" prop="email">
+          <el-input v-model="user.email" placeholder="邮箱地址" />
         </el-form-item>
         <el-form-item label="所属部门" prop="dept">
           <treeselect v-model="user.dept" :multiple="false" :options="orgData" placeholder="所属部门" />
@@ -150,20 +154,6 @@
               :value="item.value"
             />
           </el-select>
-        </el-form-item>
-        <el-form-item label="头像" prop="dept">
-          <el-upload
-            class="avatar-uploader"
-            :action="upUrl"
-            accept="image/jpeg, image/gif, image/png, image/bmp"
-            :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
-            :headers="upHeaders"
-          >
-            <img v-if="user.avatar" :src="user.avatar" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
-          </el-upload>
         </el-form-item>
       </el-form>
       <span slot="footer">
@@ -212,6 +202,8 @@ const defaultUser = {
   id: '',
   name: '',
   username: '',
+  phone: '',
+  email: '',
   dept: null,
   avatar: '/media/default/avatar.png'
 }
@@ -237,7 +229,11 @@ export default {
       dialogType: 'new',
       rule1: {
         name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
-        username: [{ required: true, message: '请输入账号', trigger: 'change' }]
+        username: [{ required: true, message: '请输入账号', trigger: 'change' }],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'change' },
+          { pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+        ]
         // password: [
         //   { required: true, message: '请输入密码', trigger: 'change' }
         // ],

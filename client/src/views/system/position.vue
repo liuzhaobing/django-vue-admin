@@ -12,7 +12,7 @@
         v-if="checkPermission(['position_create'])"
         type="primary"
         icon="el-icon-plus"
-        size="small"
+        size="mini"
         @click="handleAdd"
       >新增</el-button>
     </div>
@@ -45,14 +45,14 @@
         <template slot-scope="scope">
           <el-button
             type="primary"
-            size="small"
+            size="mini"
             icon="el-icon-edit"
             :disabled="!checkPermission(['position_update'])"
             @click="handleEdit(scope)"
           />
           <el-button
             type="danger"
-            size="small"
+            size="mini"
             icon="el-icon-delete"
             :disabled="!checkPermission(['position_delete'])"
             @click="handleDelete(scope)"

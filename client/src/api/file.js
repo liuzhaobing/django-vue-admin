@@ -16,3 +16,10 @@ export function getFileList(query) {
     params: query
   })
 }
+
+export function deleteFile(_id) {
+  return request({
+    url: `/abp/manager/api/file/${_id}/`,
+    method: 'delete'
+  })
+}

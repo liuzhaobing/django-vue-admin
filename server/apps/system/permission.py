@@ -4,6 +4,7 @@ from utils.queryset import get_child_queryset2
 from .models import Organization, Permission
 from django.db.models import Q
 
+
 def get_permission_list(user):
     """
     获取权限列表,可用redis存取
@@ -18,7 +19,7 @@ def get_permission_list(user):
                 perms = perms | i.perms.all()
         perms_list = perms.values_list('method', flat=True)
         perms_list = list(set(perms_list))
-    cache.set(user.username + '__perms', perms_list, 60*60)
+    cache.set(user.username + '__perms', perms_list, 60 * 60)
     return perms_list
 
 
@@ -35,7 +36,7 @@ class RbacPermission(BasePermission):
         :return:
         """
         if not request.user:
-            perms = ['visitor'] # 如果没有经过认证,视为游客
+            perms = ['visitor']  # 如果没有经过认证,视为游客
         else:
             perms = cache.get(request.user.username + '__perms')
         if not perms:
@@ -56,7 +57,7 @@ class RbacPermission(BasePermission):
                 return False
         else:
             return False
-    
+
     def has_object_permission(self, request, view, obj):
         """
         Return `True` if permission is granted, `False` otherwise.
@@ -66,6 +67,7 @@ class RbacPermission(BasePermission):
         if hasattr(obj, 'belong_dept'):
             has_obj_perm(request.user, obj)
         return True
+
 
 def has_obj_perm(user, obj):
     """
@@ -79,7 +81,7 @@ def has_obj_perm(user, obj):
     if '全部' in data_range:
         return True
     elif '自定义' in data_range:
-        depts = Organization.objects.filter(roles__in = roles)
+        depts = Organization.objects.filter(roles__in=roles)
         if obj.belong_dept not in depts:
             return False
     elif '同级及以下' in data_range:

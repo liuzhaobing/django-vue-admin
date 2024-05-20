@@ -30,36 +30,35 @@ router = routers.DefaultRouter()
 router.register('', FileViewSet, basename="file")
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Django-Vue-Admin API",
-      default_version='v1',
-      contact=openapi.Contact(email="caoqianming@foxmail.com"),
-      license=openapi.License(name="MIT License"),
-   ),
-   public=True,
-   permission_classes=[],
+    openapi.Info(
+        title=f"{settings.PROJECT_NAME} API",
+        default_version='v1',
+        contact=openapi.Contact(email="zhaobing.liu@outlook.com"),
+        license=openapi.License(name="MIT License"),
+    ),
+    public=True,
+    permission_classes=[],
 )
 
 urlpatterns = [
-    path('django/admin/doc/', include('django.contrib.admindocs.urls')),
-    path('django/admin/', admin.site.urls),
+                  path('django/admin/doc/', include('django.contrib.admindocs.urls')),
+                  path('django/admin/', admin.site.urls),
 
-    # api
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/black/', LogoutView.as_view(), name='token_black'),
-    path('api/file/', include(router.urls)),
-    path('api/system/', include('apps.system.urls')),
-    path('api/monitor/', include('apps.monitor.urls')),
-    path('api/wf/', include('apps.wf.urls')),
+                  # api
+                  path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+                  path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+                  path('api/token/black/', LogoutView.as_view(), name='token_black'),
+                  path('api/file/', include(router.urls)),
+                  path('api/system/', include('apps.system.urls')),
+                  path('api/monitor/', include('apps.monitor.urls')),
+                  path('api/wf/', include('apps.wf.urls')),
 
-    # api文档
-    path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    
-    # 前端页面入口
-    path('',TemplateView.as_view(template_name="index.html"))
-] + \
-static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
-static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+                  # api文档
+                  path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+                  path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
+                  # 前端页面入口
+                  path('', TemplateView.as_view(template_name="index.html"))
+              ] + \
+              static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
+              static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

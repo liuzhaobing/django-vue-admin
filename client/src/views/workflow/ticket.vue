@@ -345,7 +345,7 @@
               :limit="1"
               accept=".doc,.docx,.xls,.xlsx,.ppt,.pptx"
             >
-              <el-button size="small" type="primary">上传文件</el-button>
+              <el-button size="mini" type="primary">上传文件</el-button>
             </el-upload>
           </template>
         </el-form-item>

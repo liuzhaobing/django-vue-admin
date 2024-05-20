@@ -272,3 +272,5 @@ LOGGING = {
         },
     }
 }
+
+PROJECT_NAME = "自动化管理平台"

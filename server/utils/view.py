@@ -11,6 +11,7 @@ import uuid
 import cv2
 from server.settings import BASE_DIR
 
+
 # class UploadFileView(APIView):
 #     permission_classes = [IsAuthenticated]
 #     parser_classes = (MultiPartParser,)
@@ -43,9 +44,9 @@ class GenSignature(APIView):
         size = image.shape
         for i in range(size[0]):
             for j in range(size[1]):
-                if image[i][j][0]>100 and image[i][j][1]>100 and image[i][j][2]>100:
+                if image[i][j][0] > 100 and image[i][j][1] > 100 and image[i][j][2] > 100:
                     image[i][j][3] = 0
                 else:
-                    image[i][j][0],image[i][j][1],image[i][j][2] = 0,0,0
-        cv2.imwrite(path,image)
+                    image[i][j][0], image[i][j][1], image[i][j][2] = 0, 0, 0
+        cv2.imwrite(path, image)
         return Response(request.data, status=status.HTTP_200_OK)

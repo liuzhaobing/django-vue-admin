@@ -6,16 +6,16 @@ from django.db.models.query import QuerySet
 
 
 class SoftDeletableQuerySetMixin(object):
-    '''
+    """
     QuerySet for SoftDeletableModel. Instead of removing instance sets
     its ``is_deleted`` field to True.
-    '''
+    """
 
     def delete(self, soft=True):
-        '''
+        """
         Soft delete objects from queryset (set their ``is_deleted``
         field to True)
-        '''
+        """
         if soft:
             self.update(is_deleted=True)
         else:
@@ -27,16 +27,16 @@ class SoftDeletableQuerySet(SoftDeletableQuerySetMixin, QuerySet):
 
 
 class SoftDeletableManagerMixin(object):
-    '''
+    """
     Manager that limits the queryset by default to show only not deleted
     instances of model.
-    '''
+    """
     _queryset_class = SoftDeletableQuerySet
 
     def get_queryset(self, all=False):
-        '''
+        """
         Return queryset limited to not deleted entries.
-        '''
+        """
         kwargs = {'model': self.model, 'using': self._db}
         if hasattr(self, '_hints'):
             kwargs['hints'] = self._hints
@@ -73,9 +73,9 @@ class SoftModel(BaseModel):
     objects = SoftDeletableManager()
 
     def delete(self, using=None, soft=True, *args, **kwargs):
-        '''
+        """
         这里需要真删除的话soft=False即可
-        '''
+        """
         if soft:
             self.is_deleted = True
             self.save(using=using)

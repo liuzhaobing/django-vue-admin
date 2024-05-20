@@ -1,6 +1,7 @@
 from django.db.models import base
 from rest_framework import urlpatterns
-from apps.wf.views import CustomFieldViewSet, FromCodeListView, StateViewSet, TicketFlowViewSet, TicketViewSet, TransitionViewSet, WorkflowViewSet
+from apps.wf.views import CustomFieldViewSet, FromCodeListView, StateViewSet, TicketFlowViewSet, TicketViewSet, \
+    TransitionViewSet, WorkflowViewSet
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
@@ -15,4 +16,3 @@ urlpatterns = [
     path('participant_from_code', FromCodeListView.as_view()),
     path('', include(router.urls)),
 ]
-

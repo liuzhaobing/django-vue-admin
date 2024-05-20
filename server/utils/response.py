@@ -3,7 +3,9 @@ from rest_framework.views import exception_handler
 from rest_framework.response import Response
 import rest_framework.status as status
 import logging
+
 logger = logging.getLogger('log')
+
 
 class BaseResponse(object):
     """
@@ -56,7 +58,7 @@ class FitJSONRenderer(JSONRenderer):
                 data = data[prefix]
             if isinstance(data, list):
                 data = data[0]
-            response_body.msg = prefix + ":" + str(data) # 取一部分放入msg,方便前端alert
+            response_body.msg = prefix + ":" + str(data)  # 取一部分放入msg,方便前端alert
         else:
             response_body.data = data
         renderer_context.get("response").status_code = 200  # 统一成200响应,用code区分

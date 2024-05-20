@@ -103,7 +103,7 @@
     <!--        <el-table-column prop="size" label="日志大小"> </el-table-column>-->
     <!--        <el-table-column fixed="right" label="操作" width="100">-->
     <!--          <template slot-scope="scope">-->
-    <!--            <el-button @click="handleClick(scope.row)" type="text" size="small"-->
+    <!--            <el-button @click="handleClick(scope.row)" type="text" size="mini"-->
     <!--              >查看详情</el-button-->
     <!--            >-->
     <!--          </template>-->
