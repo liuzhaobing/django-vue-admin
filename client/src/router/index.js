@@ -145,6 +145,68 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/model',
+    component: Layout,
+    redirect: '/model/inference',
+    name: 'Model',
+    alwaysShow: true,
+    meta: { title: '模型管理', icon: 'example', perms: ['model_manage'] },
+    children: [
+      {
+        path: 'train',
+        name: 'Train',
+        component: () => import('@/views/model/train'),
+        meta: { title: '训练', icon: 'example', perms: ['model_train'] }
+      },
+      {
+        path: 'deployment',
+        name: 'Deployment',
+        component: () => import('@/views/model/deployment'),
+        meta: { title: '部署', icon: 'example', perms: ['model_deployment'] }
+      },
+      {
+        path: 'inference',
+        name: 'Inference',
+        component: () => import('@/views/model/inference'),
+        meta: { title: '推理', icon: 'example', perms: ['model_inference'] }
+      }
+    ]
+  },
+  {
+    path: '/test',
+    component: Layout,
+    redirect: '/test/plan',
+    name: 'Test',
+    alwaysShow: true,
+    meta: { title: '自动化测试', icon: 'monitor', perms: ['auto_test'] },
+    children: [
+      {
+        path: 'plan',
+        name: 'Plan',
+        component: () => import('@/views/test/plan'),
+        meta: { title: '测试计划', icon: 'file-document-outline', perms: ['test_plan'] }
+      },
+      {
+        path: 'task',
+        name: 'Task',
+        component: () => import('@/views/test/task'),
+        meta: { title: '测试任务', icon: 'calendar-check-outline', perms: ['test_task'] }
+      },
+      {
+        path: 'log',
+        name: 'Task',
+        component: () => import('@/views/test/log'),
+        meta: { title: '执行日志', icon: 'math-log', perms: ['test_log'] }
+      },
+      {
+        path: 'report',
+        name: 'Task',
+        component: () => import('@/views/test/report'),
+        meta: { title: '测试报告', icon: 'chart-timeline-variant-shimmer', perms: ['test_report'] }
+      }
+    ]
+  },
+  {
     path: '/system',
     component: Layout,
     redirect: '/system/user',

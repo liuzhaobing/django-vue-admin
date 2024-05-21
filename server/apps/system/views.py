@@ -23,6 +23,7 @@ from rest_framework.exceptions import ValidationError, ParseError
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from utils.queryset import get_child_queryset2
+from utils.view import CommonAViewSet
 
 from .filters import UserFilter
 from .mixins import CreateUpdateModelAMixin, OptimizationMixin
@@ -333,13 +334,13 @@ class UserViewSet(ModelViewSet):
         return Response(data)
 
 
-class FileViewSet(CreateModelMixin, DestroyModelMixin, RetrieveModelMixin, ListModelMixin, GenericViewSet):
+class FileViewSet(CommonAViewSet):
     """
     文件上传用
     """
     perms_map = {'get': '*', 'post': 'file_create',
                  'put': 'file_update', 'delete': 'file_delete'}
-    permission_classes = [IsAuthenticated]
+    permission_classes = [RbacPermission]
     parser_classes = [MultiPartParser, JSONParser]
     queryset = File.objects.all()
     serializer_class = FileSerializer

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'simple_history',
     'apps.system',
     'apps.monitor',
+    'apps.test',
     'apps.wf'
 ]
 

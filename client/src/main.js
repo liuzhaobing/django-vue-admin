@@ -35,7 +35,6 @@ if (process.env.NODE_ENV === 'production') {
 Vue.use(ElementUI, { size: 'medium' })
 Vue.config.productionTip = false
 
-
 new Vue({
   el: '#app',
   router,
