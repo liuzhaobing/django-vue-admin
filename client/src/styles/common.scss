@@ -1,0 +1,13 @@
+#app {
+  .filter-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .filter-container > *:not(:last-child) {
+    margin-right: 10px;
+  }
+  .app-container > *:not(:last-child) {
+    margin-top: 5px;
+  }
+}

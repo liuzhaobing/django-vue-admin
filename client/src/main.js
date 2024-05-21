@@ -15,6 +15,9 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 import tableHeight from '@/directive/el-table/index'
+import _ from 'lodash'
+Vue.prototype.$cloneDeep = _.cloneDeep
+
 Vue.use(tableHeight)
 /**
  * If you don't want to use mock-server

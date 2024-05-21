@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="file-view-header">
+    <div class="filter-container">
       <el-select
         v-model="listQuery.type"
         placeholder="文件类型"
@@ -183,15 +183,5 @@ export default {
 }
 </script>
 <style scoped>
-.file-view-header {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-.file-view-header > *:not(:last-child) {
-  margin-right: 10px;
-}
-.app-container > *:not(:last-child) {
-  margin-top: 10px;
-}
+
 </style>

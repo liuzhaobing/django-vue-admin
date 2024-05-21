@@ -1,12 +1,15 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo, getUserList } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import { arrayToMap } from '@/utils/common'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
     avatar: '',
+    users: [],
+    usersIdName: {},
     perms: []
   }
 }
@@ -25,6 +28,10 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_USERS: (state, users) => {
+    state.users = users
+    state.usersIdName = arrayToMap(users, 'id', 'name')
   },
   SET_PERMS: (state, perms) => {
     state.perms = perms
@@ -48,6 +55,18 @@ const actions = {
     })
   },
 
+  getUserList({ commit }, query) {
+    return new Promise((resolve, reject) => {
+      getUserList(query).then(response => {
+        const { data } = response
+        const { results } = data
+        commit('SET_USERS', results)
+        resolve(data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
