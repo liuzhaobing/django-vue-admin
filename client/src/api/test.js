@@ -77,6 +77,19 @@ export function taskDelete(_id) {
   })
 }
 
+export function taskStop(_id) {
+  return request({
+    url: `/abp/manager/api/test/task/${_id}/_stop/`,
+    method: 'post'
+  })
+}
+
+export function taskContinue(_id) {
+  return request({
+    url: `/abp/manager/api/test/task/${_id}/_continue/`,
+    method: 'post'
+  })
+}
 
 export function groupCreate(data) {
   return request({

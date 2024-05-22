@@ -1,3 +1,5 @@
+import sys
+import inspect
 import logging
 
 from django.conf import settings
@@ -216,6 +218,23 @@ class PermissionViewSet(ModelViewSet):
     search_fields = ['name']
     ordering_fields = ['sort']
     ordering = ['sort', 'pk']
+
+    @action(methods=['get'], detail=False,
+            url_path='perms')
+    def perms(self, request):
+        def get_all_perms_maps(base_class):
+            perms_maps = {}
+            subclasses = base_class.__subclasses__()
+
+            for subclass in subclasses:
+                perms_map = getattr(subclass, 'perms_map', None)
+                if perms_map:
+                    perms_maps[subclass.__name__] = perms_map
+                perms_maps.update(get_all_perms_maps(subclass))
+
+            return perms_maps
+
+        return Response(get_all_perms_maps(ModelViewSet))
 
 
 class OrganizationViewSet(ModelViewSet):

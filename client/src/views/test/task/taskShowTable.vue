@@ -72,6 +72,20 @@
         <el-table-column align="center" label="操作" width="170">
           <template slot-scope="scope">
             <el-row>
+              <el-tooltip
+                popper-class="cell-popover"
+                trigger="hover"
+                placement="top"
+                content="停止任务"
+              >
+                <el-button
+                  type="text"
+                  icon="el-icon-switch-button"
+                  style="margin-left: 8px"
+                  @click="stopTask(scope.row)"
+                  :disabled="scope.row.status !== 256 && scope.row.status !== 512"
+                />
+              </el-tooltip>
             </el-row>
           </template>
         </el-table-column>
@@ -82,6 +96,7 @@
 
 <script>
 import { copy } from '@/utils/common'
+import { taskContinue, taskStop } from '@/api/test'
 
 export default {
   name: 'TaskShowTable',
@@ -103,6 +118,56 @@ export default {
       ]
       return candidateColors[Math.floor(percent / 10)]
     },
+    stopTask(row) {
+      this.$confirm('确认停止?', '警告', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'error'
+      })
+        .then(async() => {
+          const response = await taskStop(row.id)
+          if (response.code === 200) {
+            this.$message({
+              type: 'success',
+              message: '任务停止成功'
+            })
+            this.$emit('refresh')
+          } else {
+            this.$message({
+              type: 'error',
+              message: response.msg
+            })
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消停止任务'
+          })
+        })
+    },
+    continueTask(row) {
+      this.$confirm('确认继续?', '警告', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'error'
+      })
+        .then(async() => {
+          const response = await taskContinue(row.id)
+          if (response.code === 200) {
+            this.$message({
+              type: 'success',
+              message: '任务继续成功'
+            })
+            this.$emit('refresh')
+         } else {
+            this.$message({
+              type: 'error',
+              message: response.msg
+            })
+         }
+       })
+     }
   },
   props: {
     loading: {

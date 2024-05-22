@@ -115,7 +115,25 @@ export default {
         type: 'error'
       })
         .then(async() => {
-          await planDelete(row.id)
+          const response = await planDelete(row.id)
+          if (response.code === 204) {
+            this.$message({
+              type: 'success',
+              message: '计划删除成功'
+            })
+            this.$emit('refresh')
+          } else {
+            this.$message({
+              type: 'error',
+              message: response.msg
+            })
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
         })
     },
     editPlan(row) {

@@ -45,8 +45,6 @@
     >
       <i slot="suffix" class="el-input__icon el-icon-search" @click="handleFilter" />
     </el-autocomplete>
-    <el-button type="primary" icon="el-icon-search" size="mini" @click="handleFilter">查询</el-button>
-    <el-button icon="el-icon-refresh-left" size="mini" @click="resetFilter">重置</el-button>
     <el-button type="primary" icon="el-icon-refresh" size="mini" @click="handleFilter">刷新</el-button>
     <el-button type="primary" icon="el-icon-document-add" size="mini" @click="createPlan">新增任务</el-button>
   </div>
@@ -61,12 +59,9 @@ export default {
     }
   },
   methods: {
-    resetFilter() {
-      this.listQuery = this.$cloneDeep(this.$store.state.common.defaultListQuery)
-    },
     async nameFilterAsync(queryString, cb) {},
     handleFilter() {
-      console.log(this.listQuery)
+      this.$emit('refresh')
     },
     createPlan() {
       this.$store.commit('test/CREATE_PLAN_TYPE', '新建计划')

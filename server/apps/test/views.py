@@ -1,5 +1,10 @@
 # -*- coding:utf-8 -*-
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
 from utils.view import CommonAViewSet
+from .filter import PlanFilter, TaskFilter
 from .models import (
     Status,
     Type,
@@ -47,6 +52,7 @@ class PlanViewSet(CommonAViewSet):
                  'put': 'plan_update', 'delete': 'plan_delete'}
     queryset = Plan.objects.all()
     serializer_class = PlanSerializer
+    filterset_class = PlanFilter
 
 
 class TaskViewSet(CommonAViewSet):
@@ -54,6 +60,25 @@ class TaskViewSet(CommonAViewSet):
                  'put': 'task_update', 'delete': 'task_delete'}
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    filterset_class = TaskFilter
+
+    @action(methods=['get'], detail=False, permission_classes=[RbacPermission], perms_map={'post': 'task_running'},
+            url_name='running')
+    def _running(self, request):
+        """查询运行中的任务"""
+        return Response(data=[], status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=True, permission_classes=[RbacPermission], perms_map={'post': 'task_stop'},
+            url_name='stop')
+    def _stop(self, request, pk=None):
+        """停止任务"""
+        return Response(data={}, status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=True, permission_classes=[RbacPermission], perms_map={'post': 'task_continue'},
+            url_name='continue')
+    def _continue(self, request, pk=None):
+        """任务断点续传"""
+        return Response(data={}, status=status.HTTP_200_OK)
 
 
 class LogViewSet(CommonAViewSet):

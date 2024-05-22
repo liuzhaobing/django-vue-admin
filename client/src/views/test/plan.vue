@@ -5,12 +5,14 @@
       :group-list="groupList.results"
       :type-list="typeList.results"
       :user-list="userList"
+      @refresh="getPlanList"
     />
     <plan-show-table
       :data="dataList.results"
       :type-data="typeData"
       :group-data="groupData"
       :user-data="userData"
+      @refresh="getPlanList"
     />
     <pagination
       v-show="dataList.count>0"
@@ -30,10 +32,11 @@ import Pagination from '@/components/Pagination/index.vue'
 import { planList, groupList, typeList } from '@/api/test'
 import { arrayToMap } from '@/utils/common'
 import PlanFilterBar from '@/views/test/plan/planFilterBar.vue'
+import TaskShowTable from '@/views/test/task/taskShowTable.vue'
 
 export default {
   name: 'Plan',
-  components: { PlanFilterBar, Pagination, PlanShowTable, PlanAddDialog },
+  components: { TaskShowTable, PlanFilterBar, Pagination, PlanShowTable, PlanAddDialog },
   data() {
     return {
       groupList: { count: 0 },

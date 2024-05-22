@@ -5,6 +5,7 @@
       :type-list="typeList.results"
       :user-list="userList"
       :list-query.sync="listQuery"
+      @refresh="getTaskList"
     />
     <task-show-table
       :data="dataList.results"
@@ -12,6 +13,7 @@
       :type-data="typeData"
       :user-data="userData"
       :status-data="statusData"
+      @refresh="getTaskList"
     />
     <pagination
       v-show="dataList.count>0"
