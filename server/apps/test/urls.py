@@ -18,7 +18,7 @@ router.register(r'plan', PlanViewSet)
 router.register(r'task', TaskViewSet)
 router.register(r'report', ReportViewSet)
 router.register(r'group', GroupViewSet)
-router.register(r'log', LogViewSet)
 urlpatterns = [
     path('', include(router.urls)),
+    path('log/<str:task_type>/', LogViewSet.as_view({'post': '_list', 'put': '_update', 'delete': '_destroy'}))
 ]

@@ -15,6 +15,7 @@ class Status(CommonAModel):
 
 class Type(CommonAModel):
     name = models.CharField('类型名称', max_length=64, unique=True)
+    name_en = models.CharField('类型名称en', max_length=64, unique=True)
     description = models.TextField('类型描述', blank=True, null=True)
     status = models.ForeignKey(
         Status, verbose_name='类型状态', on_delete=models.CASCADE

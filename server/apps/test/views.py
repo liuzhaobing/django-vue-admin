@@ -1,8 +1,11 @@
 # -*- coding:utf-8 -*-
+import bson
+
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from server import mongo_db
 from utils.view import CommonAViewSet
 from .filter import PlanFilter, TaskFilter
 from .models import (
@@ -62,7 +65,7 @@ class TaskViewSet(CommonAViewSet):
     serializer_class = TaskSerializer
     filterset_class = TaskFilter
 
-    @action(methods=['get'], detail=False, permission_classes=[RbacPermission], perms_map={'post': 'task_running'},
+    @action(methods=['get'], detail=False, permission_classes=[RbacPermission], perms_map={'get': 'task_running'},
             url_name='running')
     def _running(self, request):
         """查询运行中的任务"""
@@ -82,11 +85,37 @@ class TaskViewSet(CommonAViewSet):
 
 
 class LogViewSet(CommonAViewSet):
-    perms_map = {'get': '*', 'post': 'log_create',
-                 'put': 'log_update', 'delete': 'log_delete'}
     permission_classes = [RbacPermission]
     queryset = Log.objects.all()
     serializer_class = LogSerializer
+
+    @action(methods=['post'], detail=True, permission_classes=[RbacPermission], perms_map={'post': 'log_list'},
+            url_name='log')
+    def _list(self, request, task_type='0', *args, **kwargs):
+        """request.data is a mongo aggregate pipline like"""
+        collection = mongo_db[task_type]
+        results_count = collection.count_documents(request.data[0].get('$match', {}))
+        results_cursor = collection.aggregate_raw_batches(request.data)
+        results_data = [bson.decode_all(row) for row in results_cursor]
+        response_data = {
+            'count': results_count,
+            'previous': None,
+            'next': None,
+            'results': results_data[0] if results_data else None
+        }
+        return Response(data=response_data, status=status.HTTP_200_OK)
+
+    @action(methods=['put'], detail=True, permission_classes=[RbacPermission], perms_map={'put': 'log_update'},
+            url_name='log')
+    def _update(self, request, task_type='0', *args, **kwargs):
+        collection = mongo_db[task_type]
+        return Response(data={}, status=status.HTTP_200_OK)
+
+    @action(methods=['delete'], detail=True, permission_classes=[RbacPermission], perms_map={'delete': 'log_delete'},
+            url_name='log')
+    def _destroy(self, request, task_type='0', *args, **kwargs):
+        collection = mongo_db[task_type]
+        return Response(data={}, status=status.HTTP_200_OK)
 
 
 class ReportViewSet(CommonAViewSet):
