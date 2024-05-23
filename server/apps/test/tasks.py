@@ -118,12 +118,17 @@ def retrieve_plan(plan_id: str | int) -> bool:
 
 def publish_task(task_type_name_en: str, msg: str):
     """发布测试任务到消息队列"""
-    return publish_message(f"task_{task_type_name_en}", msg)
+    return push_to_queue(f"task_{task_type_name_en}", msg)
 
 
 def claim_task(task_type_name_en: str):
     """从消息队列领取测试任务"""
     return subscribe_channel(f"task_{task_type_name_en}")
+
+
+def inspect_task_channel(task_type_name_en: str):
+    """查阅消息队列中的测试任务"""
+    return get_queue_elements(f"task_{task_type_name_en}")
 
 
 def listening_finished_task():
