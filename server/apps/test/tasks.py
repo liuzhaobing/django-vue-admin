@@ -86,6 +86,7 @@ def retrieve_task(job_instance_id: str) -> dict | None:
     task = {
         **task,
         "plan_id": int(task['plan_id']),
+        "create_by": int(task['create_by']),
         "type": int(task['type']),
         "status": int(task['status']),
         "progress_percent": int(task['progress_percent']),
