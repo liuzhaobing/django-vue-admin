@@ -1,7 +1,11 @@
 # -*- coding:utf-8 -*-
+import json
+import threading
+
 from django.db import models
 import django.utils.timezone as timezone
 
+from .tasks import listening_finished_task, listening_task_report
 from ..system.models import CommonAModel
 
 
@@ -58,7 +62,7 @@ class Plan(CommonAModel):
 
 class Task(CommonAModel):
     name = models.CharField('名称', max_length=64)
-    job_instance_id = models.CharField('任务ID', max_length=128, unique=True)
+    job_instance_id = models.CharField('任务ID', max_length=128)
     plan_id = models.ForeignKey(
         Plan, verbose_name='计划ID', on_delete=models.CASCADE
     )
@@ -98,9 +102,7 @@ class Log(CommonAModel):
 
 class Report(CommonAModel):
     name = models.CharField('报告名称', max_length=64)
-    task_id = models.ForeignKey(
-        Task, verbose_name='任务ID', on_delete=models.CASCADE
-    )
+    job_instance_id = models.CharField('任务ID', max_length=128)
     data = models.TextField('测试报告数据', blank=True, null=True)
 
     class Meta:
@@ -109,3 +111,21 @@ class Report(CommonAModel):
 
     def __str__(self):
         return self.name
+
+
+class ReportListenThread(threading.Thread):
+    def run(self):
+        for message in listening_task_report():
+            payload = json.loads(message)
+            Report.objects.create(**payload)
+
+
+class TaskListenThread(threading.Thread):
+    def run(self):
+        for message in listening_finished_task():
+            payload = json.loads(message)
+            Task.objects.create(**payload)
+
+
+TaskListenThread().start()
+ReportListenThread().start()

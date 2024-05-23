@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+import json
+
 import bson
 
 from rest_framework import status
@@ -26,6 +28,7 @@ from .serializers import (
     ReportSerializer,
     LogSerializer,
 )
+from .tasks import *
 from ..system.permission import RbacPermission
 
 
@@ -57,6 +60,35 @@ class PlanViewSet(CommonAViewSet):
     serializer_class = PlanSerializer
     filterset_class = PlanFilter
 
+    @action(methods=['get'], detail=True, permission_classes=[RbacPermission], perms_map={'post': 'task_publish'},
+            url_name='publish')
+    def _publish(self, request, pk: int = None):
+        """任务发布"""
+        # 0.find out the plan information
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        plan = serializer.data
+        # 1.publish plan information to redis
+        update_plan(pk, dict(plan))
+        # 2.publish task information to redis
+        task = {
+            "name": instance.name,
+            "job_instance_id": "gggg",
+            "plan_id": pk,
+            "type": instance.type.id,
+            "type_name": instance.type.name_en,
+            "status": 1024,
+            "progress": "0/0",
+            "progress_percent": 0,
+        }
+        update_task(task['job_instance_id'], task)
+        # 3.redis change status
+        status_change(task['job_instance_id'], STATUS.STOPPED, STATUS.RUNNING)
+        # 4.publish sequence to task channel
+        sequence = {"plan_id": pk, "job_instance_id": task['job_instance_id'], "execute_type": "start"}
+        publish_task(task['type_name'], json.dumps(sequence, ensure_ascii=False))
+        return Response(plan)
+
 
 class TaskViewSet(CommonAViewSet):
     perms_map = {'get': '*', 'post': 'task_create',
@@ -69,19 +101,50 @@ class TaskViewSet(CommonAViewSet):
             url_name='running')
     def _running(self, request):
         """查询运行中的任务"""
-        return Response(data=[], status=status.HTTP_200_OK)
+        tasks = list_tasks(dict(request.query_params), STATUS.RUNNING)
+        response_data = {
+            'count': len(tasks),
+            'previous': None,
+            'next': None,
+            'results': tasks
+        }
+        return Response(data=response_data, status=status.HTTP_200_OK)
 
     @action(methods=['post'], detail=True, permission_classes=[RbacPermission], perms_map={'post': 'task_stop'},
             url_name='stop')
-    def _stop(self, request, pk=None):
+    def _stop(self, request, pk: str = None):
         """停止任务"""
-        return Response(data={}, status=status.HTTP_200_OK)
+        # 0.find out the task information
+        task = retrieve_task(pk)
+        # 1.redis change status
+        status_change(pk, STATUS.RUNNING, STATUS.STOPPED)
+        # 2.notify worker to stop
+        sequence = {"job_instance_id": task['job_instance_id'], "execute_type": "stop"}
+        publish_task(task['type_name'], json.dumps(sequence, ensure_ascii=False))
+        # 3.task record to mysql table
+        serializer = self.get_serializer(data=task)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @action(methods=['post'], detail=True, permission_classes=[RbacPermission], perms_map={'post': 'task_continue'},
             url_name='continue')
-    def _continue(self, request, pk=None):
+    def _continue(self, request, pk: int = None):
         """任务断点续传"""
-        return Response(data={}, status=status.HTTP_200_OK)
+        # 0.find out the task information
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        task = serializer.data
+        task_info = self._retrieve_task(task['job_instance_id'])
+        # 1.redis change status
+        status_change(task_info['job_instance_id'], STATUS.STOPPED, STATUS.RUNNING)
+        # 2.notify worker to continue
+        sequence = {"job_instance_id": task_info['job_instance_id'], "execute_type": "continue"}
+        publish_task(task_info['type_name'], json.dumps(sequence, ensure_ascii=False))
+        # 3.task record remove from mysql table
+        self.perform_destroy(instance)
+        return Response(task_info)
 
 
 class LogViewSet(CommonAViewSet):

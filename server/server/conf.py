@@ -5,7 +5,7 @@ DATABASES = {
         "NAME": "roki",
         "USER": "root",
         "PASSWORD": "123456",
-        "HOST": "54.176.123.132",
+        "HOST": "192.168.87.21",
         "PORT": 3306,
     }
 }
@@ -13,7 +13,7 @@ DATABASES = {
 REDIS = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://54.176.123.132:6379/1",
+        "LOCATION": "redis://192.168.87.21:6379/1",
     }
 }
 
@@ -25,7 +25,7 @@ MONGO = {
         "CLIENT": {
             "username": "root",
             "password": "123456",
-            "host": "54.176.123.132",
+            "host": "192.168.87.21",
             "port": 27017,
             "authSource": "admin",
             "authMechanism": "SCRAM-SHA-256",
