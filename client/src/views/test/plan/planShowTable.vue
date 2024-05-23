@@ -49,7 +49,7 @@
             <span>{{ scope.row.create_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作" width="170">
+        <el-table-column align="center" label="操作" width="150">
           <template slot-scope="scope">
             <el-row>
               <el-tooltip
@@ -102,7 +102,7 @@
 
 <script>
 import { copy } from '@/utils/common'
-import { planDelete } from '@/api/test'
+import { planDelete, taskPublish } from '@/api/test'
 
 export default {
   name: 'PlanShowTable',
@@ -142,7 +142,33 @@ export default {
       this.$store.commit('test/SET_ACTIVE', 2)
       return this.$store.commit('test/CREATE_PLAN_VISIBLE', true)
     },
-    createTask(row) {},
+    createTask(row) {
+      this.$confirm('确认执行?', '警告', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'error'
+      })
+        .then(async() => {
+          const response = await taskPublish(row.id)
+          if (response.code === 201) {
+            this.$message({
+              type: 'success',
+              message: '任务创建成功'
+            })
+          } else {
+            this.$message({
+              type: 'error',
+              message: response.msg
+            })
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
   },
   props: {
     loading: {

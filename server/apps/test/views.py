@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from server import mongo_db
+from utils.tools import generate_trace_id
 from utils.view import CommonAViewSet
 from .filter import PlanFilter, TaskFilter
 from .models import (
@@ -73,12 +74,13 @@ class PlanViewSet(CommonAViewSet):
         # 2.publish task information to redis
         task = {
             "name": instance.name,
-            "job_instance_id": "gggg",
+            "job_instance_id": generate_trace_id(instance.type.name_en),
             "plan_id": pk,
             "type": instance.type.id,
             "type_name": instance.type.name_en,
             "status": 1024,
             "progress": "0/0",
+            "create_by": request.user.id,
             "progress_percent": 0,
         }
         update_task(task['job_instance_id'], task)
@@ -87,7 +89,7 @@ class PlanViewSet(CommonAViewSet):
         # 4.publish sequence to task channel
         sequence = {"plan_id": pk, "job_instance_id": task['job_instance_id'], "execute_type": "start"}
         publish_task(task['type_name'], json.dumps(sequence, ensure_ascii=False))
-        return Response(plan)
+        return Response(plan, status=status.HTTP_201_CREATED)
 
 
 class TaskViewSet(CommonAViewSet):

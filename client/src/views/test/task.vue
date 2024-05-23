@@ -31,7 +31,7 @@ import TaskFilterBar from '@/views/test/task/taskFilterBar.vue'
 import TaskShowTable from '@/views/test/task/taskShowTable.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import { arrayToMap } from '@/utils/common'
-import { groupList, taskList, typeList, statusList } from '@/api/test'
+import { groupList, taskList, typeList, statusList, taskRunningList } from '@/api/test'
 
 export default {
   components: { Pagination, TaskFilterBar, TaskShowTable },
@@ -99,10 +99,20 @@ export default {
         }
       })
     },
-    getTaskList() {
+    async getTaskList() {
       this.listLoading = true
-      taskList(this.listQuery).then(response => {
+      let data = []
+      if (this.listQuery.page === 1) {
+        await taskRunningList(this.listQuery).then(response => {
+          if (response.data) {
+            data = response.data.results
+          }
+        })
+      }
+      await taskList(this.listQuery).then(response => {
         if (response.data) {
+          data = [...data, ...response.data.results]
+          response.data.results = data
           this.dataList = response.data
         }
         this.listLoading = false

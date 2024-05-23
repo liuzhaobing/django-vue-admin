@@ -69,9 +69,25 @@
             <span>{{ scope.row.end_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作" width="170">
+        <el-table-column align="center" label="操作" width="100">
           <template slot-scope="scope">
             <el-row>
+              <el-popover
+                width="300"
+                trigger="click"
+                title="文件下载"
+              >
+                <div>
+                  <p>选择下载测试结果或者测试用例</p>
+                  <el-button size="mini" type="success" :disabled="!scope.row.result_file" @click="handleMissionDownload(scope.row, 1)">测试结果</el-button>
+                  <el-button size="mini" type="primary" :disabled="!scope.row.case_file" @click="handleMissionDownload(scope.row, 0)">测试用例</el-button>
+                </div>
+                <el-button
+                  slot="reference"
+                  type="text"
+                  icon="el-icon-download"
+                />
+              </el-popover>
               <el-tooltip
                 popper-class="cell-popover"
                 trigger="hover"
@@ -97,6 +113,7 @@
 <script>
 import { copy } from '@/utils/common'
 import { taskContinue, taskStop } from '@/api/test'
+import { Message } from 'element-ui'
 
 export default {
   name: 'TaskShowTable',
@@ -167,7 +184,18 @@ export default {
             })
          }
        })
-     }
+     },
+    handleMissionDownload(row, type) {
+      try {
+        const a = document.createElement('a')
+        a.href = type === 1 ? row.result_file : row.case_file
+        a.click()
+        window.URL.revokeObjectURL(a.href)
+        Message.success('下载成功！')
+      } catch (error) {
+        Message.error('下载失败！')
+      }
+    },
   },
   props: {
     loading: {

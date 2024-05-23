@@ -38,6 +38,12 @@ export function planDelete(_id) {
   })
 }
 
+export function taskPublish(_id) {
+  return request({
+    url: `/abp/manager/api/test/plan/${_id}/_publish/`,
+    method: 'get'
+  })
+}
 
 export function taskCreate(data) {
   return request({
@@ -65,6 +71,14 @@ export function taskRetrieve(_id) {
 export function taskList(query) {
   return request({
     url: '/abp/manager/api/test/task/',
+    method: 'get',
+    params: query
+  })
+}
+
+export function taskRunningList(query) {
+  return request({
+    url: '/abp/manager/api/test/task/_running/',
     method: 'get',
     params: query
   })
