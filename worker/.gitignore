@@ -1,0 +1,9 @@
+.vscode/
+.vs/
+venv/
+__pycache__/
+*.pyc
+media/*
+vuedist/*
+dist/*
+logs

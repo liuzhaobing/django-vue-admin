@@ -30,6 +30,7 @@ from .serializers import (
     LogSerializer,
 )
 from .tasks import *
+from .tasks import update_task_info
 from ..system.permission import RbacPermission
 
 
@@ -119,16 +120,11 @@ class TaskViewSet(CommonAViewSet):
         # 0.find out the task information
         task = retrieve_task(pk)
         # 1.redis change status
-        status_change(pk, STATUS.RUNNING, STATUS.STOPPED)
+        update_task_info(task['job_instance_id'], {'update_by': request.user.id})
         # 2.notify worker to stop
         sequence = {"job_instance_id": task['job_instance_id'], "execute_type": "stop"}
         publish_task(task['type_name'], json.dumps(sequence, ensure_ascii=False))
-        # 3.task record to mysql table
-        serializer = self.get_serializer(data=task)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(task, status=status.HTTP_201_CREATED)
 
     @action(methods=['post'], detail=True, permission_classes=[RbacPermission], perms_map={'post': 'task_continue'},
             url_name='continue')

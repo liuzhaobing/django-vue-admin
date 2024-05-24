@@ -142,8 +142,8 @@ export default {
         type: 'error'
       })
         .then(async() => {
-          const response = await taskStop(row.id)
-          if (response.code === 200) {
+          const response = await taskStop(row.job_instance_id)
+          if (response.code === 201) {
             this.$message({
               type: 'success',
               message: '任务停止成功'

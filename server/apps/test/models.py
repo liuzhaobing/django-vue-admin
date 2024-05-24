@@ -1,12 +1,8 @@
 # -*- coding:utf-8 -*-
-import json
-import threading
-
 from django.db import models
 import django.utils.timezone as timezone
 
-from .tasks import listening_finished_task, listening_task_report
-from ..system.models import CommonAModel
+from ..system.models import CommonAModel, User
 
 
 class Status(CommonAModel):
@@ -111,21 +107,3 @@ class Report(CommonAModel):
 
     def __str__(self):
         return self.name
-
-
-class ReportListenThread(threading.Thread):
-    def run(self):
-        for message in listening_task_report():
-            payload = json.loads(message)
-            Report.objects.create(**payload)
-
-
-class TaskListenThread(threading.Thread):
-    def run(self):
-        for message in listening_finished_task():
-            payload = json.loads(message)
-            Task.objects.create(**payload)
-
-
-TaskListenThread().start()
-ReportListenThread().start()

@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import redis
 
-from server import redis_pool
+from worker import redis_pool
 
 
 def publish_message(channel, message):
