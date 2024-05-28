@@ -212,7 +212,7 @@ class TaskManager(TaskInfo):
         with task_lock:
             task = TASKS.get(self.job_instance_id)
             if task:
-                task.accuracy = accuracy
+                task.metrics = round(accuracy, 5)
                 update_task(self.job_instance_id, self.info)
                 return
             logger.error(f"task update accuracy failed reason: invalid job_instance_id {self.job_instance_id}")

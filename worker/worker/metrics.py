@@ -33,7 +33,7 @@ def get_metrics(
     unique_ys = set(y_true)
 
     def calculate_one_topic_none(unique_y):
-        _metric = {y_true_key: unique_y}
+        _metric = {"average": f"{y_true_key}", y_true_key: unique_y}
         for metric in metrics:
             if metric in [
                 recall_score,

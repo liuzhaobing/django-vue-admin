@@ -94,24 +94,35 @@ class NLPUser:
         end_time = time.perf_counter()
         row["edg_cost"] = round((end_time - start_time) * 1000)
         logger.info(response.text)
-        try:
-            result = self.extract_nlp_output(response.json())
-            result["is_intent_pass"] = result["act_intent"] == row["intent"]
-            result["act_slots"] = json.dumps(result["act_slots"], ensure_ascii=False) if result["act_slots"] else ""
-        except Exception as e:
-            print(e)
+        result = self.extract_nlp_output(response.json())
+        result["is_intent_pass"] = result["act_intent"] == row.get("intent", "")
+        result["act_slots"] = json.dumps(result["act_slots"], ensure_ascii=False) if result["act_slots"] else ""
+        result["is_slots_pass"] = self.calculate_slots_acc(row.get("slots", ""), result["act_slots"])
+        result["is_pass"] = result["is_intent_pass"] and result["is_slots_pass"]
+        if result["is_pass"]:
+            self.task.pass_count += 1
+        else:
+            self.task.fail_count += 1
         return {**row, **result}
 
     def calculate_slots_acc(self, slots: dict | str, act_slots: dict | str):
-        slots = json.loads(slots) if not isinstance(slots, dict) else slots
-        act_slots = json.loads(act_slots) if not isinstance(act_slots, dict) else act_slots
+        if not isinstance(slots, dict):
+            try:
+                slots = json.loads(slots)
+            except Exception as e:
+                slots = {}
+        if not isinstance(act_slots, dict):
+            try:
+                act_slots = json.loads(act_slots)
+            except Exception as e:
+                act_slots = {}
         return slots == act_slots
 
     def get_slots_metrics(self, results: list[dict]):
         pass_count = sum(
             map(lambda item: self.calculate_slots_acc(item["slots"], item["act_slots"]), results)
         )
-        return pass_count / self.cases_count
+        return pass_count / len(results)
 
     def calculate_nlp_metrics(
             self,
@@ -145,12 +156,14 @@ class NLPUser:
                 case = get_case(self.task.job_instance_id)
                 if case is None:
                     return None
-                run_one_case(json.loads(case))
                 reset_count = get_cases_count(self.task.job_instance_id)
                 progress = f"{self.cases_count - reset_count}/{self.cases_count}"
                 self.task.update_progress(progress)
                 progress_percent = int((self.cases_count - reset_count) * 100 / self.cases_count)
                 self.task.update_progress_percent(progress_percent)
+                self.task.update_accuracy(self.task.pass_count / (self.cases_count - reset_count))
+
+                run_one_case(json.loads(case))
 
         users = []
         for i in range(self.plan.config["chan_num"]):
@@ -165,6 +178,7 @@ class NLPUser:
     def success(self, *args, **kwargs):
         log_all_data = mongo_db[self.task.type_name_en].find({"job_instance_id": self.task.job_instance_id},
                                                              {"_id": 0})
+        log_all_data = list(log_all_data)
         log_headers = [{"key": "id", "label": "用例编号"}, {"key": "question", "label": "测试语句"},
                        {"key": "domain", "label": "期望domain"}, {"key": "act_domain", "label": "实际domain"},
                        {"key": "intent", "label": "期望intent"}, {"key": "act_intent", "label": "实际intent"},
@@ -177,9 +191,11 @@ class NLPUser:
 
         overall, domain_metrics, intent_metrics = self.calculate_nlp_metrics(log_all_data)
 
-        report_headers = [{"key": "precision_score", "label": "精确率"}, {"key": "recall_score", "label": "召回率"},
-                          {"key": "f1_score", "label": "F1"}, {"key": "average", "label": "指标"},
-                          {"key": "domain", "label": "领域"}, {"key": "intent", "label": "意图"}]
+        report_headers = [
+            {"key": "average", "label": "指标"}, {"key": "domain", "label": "领域"}, {"key": "intent", "label": "意图"},
+            {"key": "precision_score", "label": "精确率"}, {"key": "recall_score", "label": "召回率"},
+            {"key": "f1_score", "label": "F1"},
+        ]
 
         report_all_data_format = format_log_details(report_headers, overall + domain_metrics + intent_metrics)
 
@@ -188,10 +204,7 @@ class NLPUser:
         remote_filename = upload_file(filename, f"{MANAGER}/api/test/file/")
 
         if self.task.status == TaskStatus.RUNNING:
-            if self.task.progress_percent in [100, "100"]:
-                self.task.success(result_file=remote_filename)
-            else:
-                self.task.failure("用例执行完毕, 但是进度未达到100%, 请检查!")
+            self.task.success(result_file=remote_filename)
 
 
 __all__ = (

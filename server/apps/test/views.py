@@ -164,8 +164,8 @@ class TaskViewSet(CommonAViewSet):
                 delete_task_info(pk)
                 close_cases(pk)
                 return Response(destroy_task(pk), status=status.HTTP_204_NO_CONTENT)
-            return Response(data={'msg': '任务最近5分钟内有活跃，请稍后再试！'})
-        return Response(data={'msg': '任务不存在！'})
+            return Response(data='任务最近5分钟内有活跃，请稍后再试！', status=status.HTTP_406_NOT_ACCEPTABLE)
+        return Response(data='任务不存在！', status=status.HTTP_406_NOT_ACCEPTABLE)
 
     @action(methods=['post'], detail=True, permission_classes=[RbacPermission], perms_map={'post': 'task_stop'},
             url_name='stop')
