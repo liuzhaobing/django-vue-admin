@@ -31,17 +31,17 @@
         </el-table-column>
         <el-table-column label="分组" align="center">
           <template slot-scope="scope">
-            <span>{{ groupData[scope.row.group] }}</span>
+            <span>{{ scope.row.group_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="计划类型" width="100" align="center">
           <template slot-scope="scope">
-            <span>{{ typeData[scope.row.type] }}</span>
+            <span>{{ scope.row.type_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="创建者" width="100" align="center">
           <template slot-scope="scope">
-            <span>{{ userData[scope.row.create_by] }}</span>
+            <span>{{ scope.row.create_user }}</span>
           </template>
         </el-table-column>
         <el-table-column label="创建时间" width="170" align="center">
@@ -109,7 +109,7 @@ export default {
   methods: {
     copy,
     deletePlan(row) {
-      this.$confirm('确认删除?', '警告', {
+      this.$confirm(`确认删除 ⌜${row.name}⌟ ？`, '警告', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'error'
@@ -179,27 +179,6 @@ export default {
       required: true,
       type: Array,
       default: () => []
-    },
-    userData: {
-      required: true,
-      type: Object,
-      default: () => {
-        return {}
-      }
-    },
-    typeData: {
-      required: true,
-      type: Object,
-      default: () => {
-        return {}
-      }
-    },
-    groupData: {
-      required: true,
-      type: Object,
-      default: () => {
-        return {}
-      }
     }
   }
 }

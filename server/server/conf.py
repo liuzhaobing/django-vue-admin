@@ -1,35 +1,15 @@
+from utils.data import read_yaml_file
+
 DEBUG = True
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "roki",
-        "USER": "root",
-        "PASSWORD": "123456",
-        "HOST": "192.168.87.21",
-        "PORT": 3306,
-    }
-}
+config = read_yaml_file("conf/config.yaml")
+DATABASES = config["mysql-roki"]
+REDIS = config["redis-roki"]
+MONGO = config["mongo-roki"]
+MANAGER = config["manager"]
 
-REDIS = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://192.168.87.21:6379/1",
-    }
-}
-
-MONGO = {
-    "default": {
-        "ENGINE": "djongo",
-        "NAME": "roki",
-        "ENFORCE_SCHEMA": False,
-        "CLIENT": {
-            "username": "root",
-            "password": "123456",
-            "host": "192.168.87.21",
-            "port": 27017,
-            "authSource": "admin",
-            "authMechanism": "SCRAM-SHA-256",
-            "maxPoolSize": 32
-        }
-    }
-}
+__all__ = (
+    "DATABASES",
+    "REDIS",
+    "MONGO",
+    "MANAGER",
+)

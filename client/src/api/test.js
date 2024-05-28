@@ -91,6 +91,13 @@ export function taskDelete(_id) {
   })
 }
 
+export function taskDeletion(job_instance_id) {
+  return request({
+    url: `/abp/manager/api/test/task/${job_instance_id}/_deletion/`,
+    method: 'delete'
+  })
+}
+
 export function taskStop(_id) {
   return request({
     url: `/abp/manager/api/test/task/${_id}/_stop/`,

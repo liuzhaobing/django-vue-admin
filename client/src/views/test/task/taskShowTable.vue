@@ -31,7 +31,7 @@
         </el-table-column>
         <el-table-column label="任务类型" width="100" align="center">
           <template slot-scope="scope">
-            <span>{{ typeData[scope.row.type] }}</span>
+            <span>{{ scope.row.type_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="执行进度" width="150" align="center">
@@ -51,12 +51,12 @@
         </el-table-column>
         <el-table-column label="状态" width="80" align="center">
           <template slot-scope="scope">
-            <span>{{ statusData[scope.row.status] }}</span>
+            <span>{{ scope.row.status_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="执行者" width="100" align="center">
           <template slot-scope="scope">
-            <span>{{ userData[scope.row.create_by] }}</span>
+            <span>{{ scope.row.create_user }}</span>
           </template>
         </el-table-column>
         <el-table-column label="开始时间" width="170" align="center">
@@ -102,6 +102,19 @@
                   :disabled="scope.row.status !== 256 && scope.row.status !== 512"
                 />
               </el-tooltip>
+              <el-tooltip
+                popper-class="cell-popover"
+                trigger="hover"
+                placement="top"
+                content="删除任务"
+              >
+                <el-button
+                  type="text"
+                  icon="el-icon-delete"
+                  style="margin-left: 8px"
+                  @click="deleteTask(scope.row)"
+                />
+              </el-tooltip>
             </el-row>
           </template>
         </el-table-column>
@@ -112,7 +125,7 @@
 
 <script>
 import { copy } from '@/utils/common'
-import { taskContinue, taskStop } from '@/api/test'
+import { taskDelete, taskDeletion, taskContinue, taskStop } from '@/api/test'
 import { Message } from 'element-ui'
 
 export default {
@@ -177,18 +190,18 @@ export default {
               message: '任务继续成功'
             })
             this.$emit('refresh')
-         } else {
+          } else {
             this.$message({
               type: 'error',
               message: response.msg
             })
-         }
-       })
-     },
+          }
+        })
+    },
     handleMissionDownload(row, type) {
       try {
         const a = document.createElement('a')
-        a.href = type === 1 ? row.result_file : row.case_file
+        a.href = type === 1 ? `/abp/manager/${row.result_file}` : `/abp/manager/${row.case_file}`
         a.click()
         window.URL.revokeObjectURL(a.href)
         Message.success('下载成功！')
@@ -196,6 +209,39 @@ export default {
         Message.error('下载失败！')
       }
     },
+    deleteTask(row) {
+      this.$confirm(`确认删除 ⌜${row.name}⌟ ？`, '警告', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'error'
+      })
+        .then(async() => {
+          let response
+          if (row.id) {
+            response = await taskDelete(row.id)
+          } else {
+            response = await taskDeletion(row.job_instance_id)
+          }
+          if (response.code === 204) {
+            this.$message({
+              type: 'success',
+              message: '任务删除成功'
+            })
+            this.$emit('refresh')
+          } else {
+            this.$message({
+              type: 'error',
+              message: response.msg
+            })
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    }
   },
   props: {
     loading: {
@@ -206,34 +252,6 @@ export default {
       required: true,
       type: Array,
       default: () => []
-    },
-    userData: {
-      required: true,
-      type: Object,
-      default: () => {
-        return {}
-      }
-    },
-    typeData: {
-      required: true,
-      type: Object,
-      default: () => {
-        return {}
-      }
-    },
-    groupData: {
-      required: true,
-      type: Object,
-      default: () => {
-        return {}
-      }
-    },
-    statusData: {
-      required: true,
-      type: Object,
-      default: () => {
-        return {}
-      }
     }
   }
 }

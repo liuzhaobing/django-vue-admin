@@ -9,10 +9,6 @@
     />
     <task-show-table
       :data="dataList.results"
-      :group-data="groupData"
-      :type-data="typeData"
-      :user-data="userData"
-      :status-data="statusData"
       @refresh="getTaskList"
     />
     <pagination

@@ -1,13 +1,16 @@
 # -*- coding:utf-8 -*-
 import json
-
+from datetime import datetime
 import bson
 
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.mixins import CreateModelMixin
+from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 
-from server import mongo_db
+from server import mongo_db, settings
 from utils.tools import generate_trace_id
 from utils.view import CommonAViewSet
 from .filter import PlanFilter, TaskFilter
@@ -30,8 +33,42 @@ from .serializers import (
     LogSerializer,
 )
 from .tasks import *
-from .tasks import update_task_info
+from .tasks import update_task_info, get_tasks
+from ..system.models import File
 from ..system.permission import RbacPermission
+from ..system.serializers import FileSerializer
+
+
+class FileViewSet(CreateModelMixin, GenericViewSet):
+    """
+    文件上传用
+    """
+    perms_map = {}
+    permission_classes = []
+    parser_classes = [MultiPartParser, JSONParser]
+    queryset = File.objects.all()
+    serializer_class = FileSerializer
+    filterset_fields = ['type']
+    search_fields = ['name']
+    ordering = ['-create_time']
+
+    def perform_create(self, serializer):
+        file_obj = self.request.data.get('file')
+        name = file_obj._name
+        size = file_obj.size
+        mime = file_obj.content_type
+        tp = '其它'
+        if 'image' in mime:
+            tp = '图片'
+        elif 'video' in mime:
+            tp = '视频'
+        elif 'audio' in mime:
+            tp = '音频'
+        elif 'application' or 'text' in mime:
+            tp = '文档'
+        instance = serializer.save(create_by=self.request.user, name=name, size=size, type=tp, mime=mime)
+        instance.path = settings.MEDIA_URL + instance.file.name
+        instance.save()
 
 
 class StatusViewSet(CommonAViewSet):
@@ -78,18 +115,21 @@ class PlanViewSet(CommonAViewSet):
             "job_instance_id": generate_trace_id(instance.type.name_en),
             "plan_id": pk,
             "type": instance.type.id,
-            "type_name": instance.type.name_en,
+            "type_name": instance.type.name,
+            "type_name_en": instance.type.name_en,
             "status": 1024,
+            "status_name": "队列中",
             "progress": "0/0",
-            "create_by": request.user.id,
             "progress_percent": 0,
+            "create_by": request.user.id,
+            "create_user": request.user.name,
         }
         update_task(task['job_instance_id'], task)
         # 3.redis change status
         status_change(task['job_instance_id'], STATUS.STOPPED, STATUS.RUNNING)
         # 4.publish sequence to task channel
         sequence = {"plan_id": pk, "job_instance_id": task['job_instance_id'], "execute_type": "start"}
-        publish_task(task['type_name'], json.dumps(sequence, ensure_ascii=False))
+        publish_task(task['type_name_en'], json.dumps(sequence, ensure_ascii=False))
         return Response(plan, status=status.HTTP_201_CREATED)
 
 
@@ -112,6 +152,20 @@ class TaskViewSet(CommonAViewSet):
             'results': tasks
         }
         return Response(data=response_data, status=status.HTTP_200_OK)
+
+    @action(methods=['delete'], detail=True, permission_classes=[RbacPermission], perms_map={'get': 'task_deletion'},
+            url_name='deletion')
+    def _deletion(self, request, pk: str = None):
+        """删除僵尸任务"""
+        tasks = get_tasks()
+        if pk in tasks:
+            last_active_time_string = tasks[pk]
+            if datetime.now().timestamp() - float(last_active_time_string) > 300:
+                delete_task_info(pk)
+                close_cases(pk)
+                return Response(destroy_task(pk), status=status.HTTP_204_NO_CONTENT)
+            return Response(data={'msg': '任务最近5分钟内有活跃，请稍后再试！'})
+        return Response(data={'msg': '任务不存在！'})
 
     @action(methods=['post'], detail=True, permission_classes=[RbacPermission], perms_map={'post': 'task_stop'},
             url_name='stop')
