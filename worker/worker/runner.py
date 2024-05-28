@@ -105,10 +105,10 @@ class BaseTask:
 
 def InitTaskModel(task: TaskManager, plan: TaskPlan) -> TaskModel:
     for model in TaskModel.__subclasses__():
-        if model.TASK_TYPE == plan.type_name:
-            logger.info(f"init task model success! [{plan.type_name}]")
+        if model.TASK_TYPE == plan.type_name_en:
+            logger.info(f"init task model success! [{plan.type_name_en}]")
             return model(task, plan)
-    logger.error(f"init task model failed reason: not find task_type! [{plan.type_name}]")
+    logger.error(f"init task model failed reason: not find task_type! [{plan.type_name_en}]")
 
 
 class TaskListenThread(threading.Thread):
@@ -135,6 +135,7 @@ class TaskListenThread(threading.Thread):
                 plan: TaskPlan = TaskPlan(**plan_info)
                 task: TaskManager = TaskManager(**task_info)
                 plan.type_name = task.type_name
+                plan.type_name_en = task.type_name_en
                 thead = TaskThread(task, plan)
                 thead.daemon = True
                 thead.start()

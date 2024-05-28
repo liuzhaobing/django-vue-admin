@@ -8,6 +8,15 @@ from .models import (Dict, DictType, File, Organization, Permission, Position,
                      Role, User)
 
 
+class CommonASerializer(serializers.ModelSerializer):
+    create_user = serializers.CharField(source='create_by.name', read_only=True)
+    update_user = serializers.CharField(source='update_by.name', read_only=True)
+
+    class Meta:
+        model = None
+        fields = '__all__'
+
+
 class IntervalSerializer(serializers.ModelSerializer):
     class Meta:
         model = IntervalSchedule

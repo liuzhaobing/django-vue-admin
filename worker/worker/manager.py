@@ -10,7 +10,8 @@ from typing import Optional, Any
 from dataclasses import dataclass
 
 from utils import context as _context
-from worker.tasks import update_task, status_change, broadcast_finished_task, close_cases, STATUS, update_task_info
+from worker.tasks import (update_task, status_change, broadcast_finished_task, close_cases,
+                          STATUS, update_task_info, delete_task_info)
 
 logger = logging.getLogger("log")
 TASKS = {}
@@ -50,7 +51,9 @@ class TaskInfo(BaseClass):
         self.plan_id: str = ""
         self.type: str = ""
         self.type_name: str = ""
-        self.status: str = "1024"
+        self.type_name_en: str = ""
+        self.status: str = TaskStatus.QUEUEING
+        self.status_name: str = TaskMessage.QUEUEING
         self.progress: str = "0/0"
         self.progress_percent: str = "0"
         self.metrics: str = ""
@@ -73,6 +76,7 @@ class TaskPlan(BaseClass):
         self.data_source: str = ""
         self.type: str = ""
         self.type_name: str = ""
+        self.type_name_en: str = ""
         super().__init__(**kwargs)
 
 
@@ -89,7 +93,7 @@ class TaskManager(TaskInfo):
     def generate_job_instance_id(self):
         """生成任务实例ID"""
         now = datetime.datetime.now()
-        _id = self.type_name.upper() + now.strftime("%Y%m%d%H%M%S") + base64.b32encode(os.urandom(5)).decode("ascii")
+        _id = self.type_name_en.upper() + now.strftime("%Y%m%d%H%M%S") + base64.b32encode(os.urandom(5)).decode("ascii")
         if not self.job_instance_id:
             self.job_instance_id = _id
         return self.job_instance_id
@@ -102,7 +106,7 @@ class TaskManager(TaskInfo):
         now = datetime.datetime.now()
         self.start_time = now.strftime("%Y-%m-%d %H:%M:%S")
 
-        _id = self.type_name.upper() + now.strftime("%Y%m%d%H%M%S") + base64.b32encode(os.urandom(5)).decode("ascii")
+        _id = self.type_name_en.upper() + now.strftime("%Y%m%d%H%M%S") + base64.b32encode(os.urandom(5)).decode("ascii")
         if not self.job_instance_id:
             self.job_instance_id = _id
         self.context = _context.Context()
@@ -133,6 +137,7 @@ class TaskManager(TaskInfo):
                 task.message = message
                 logger.info(f"task success job_instance_id: {self.job_instance_id}")
                 logger.info(f"task success result_file: {task.result_file}")
+                delete_task_info(self.job_instance_id)
                 close_cases(self.job_instance_id)
                 self.fire(status=TaskStatus.SUCCESS, message=message)
                 return
