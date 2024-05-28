@@ -53,7 +53,7 @@ class TaskInfo(BaseClass):
         self.type_name: str = ""
         self.type_name_en: str = ""
         self.status: str = TaskStatus.QUEUEING
-        self.status_name: str = TaskMessage.QUEUEING
+        self.status_name: str = "队列中"
         self.progress: str = "0/0"
         self.progress_percent: str = "0"
         self.metrics: str = ""
@@ -101,6 +101,7 @@ class TaskManager(TaskInfo):
     def prepare(self, message: str = TaskMessage.PREPARE):
         logger.info(f"task prepare start with task_name: {self.name}")
         self.status = TaskStatus.PREPARE
+        self.status_name = "准备中"
         self.message = message
 
         now = datetime.datetime.now()
@@ -120,6 +121,7 @@ class TaskManager(TaskInfo):
             task = TASKS.get(self.job_instance_id)
             if task:
                 task.status = TaskStatus.RUNNING
+                task.status_name = "执行中"
                 task.message = message
                 update_task(self.job_instance_id, self.info)
                 logger.info(f"task running start with job_instance_id: {self.job_instance_id}")

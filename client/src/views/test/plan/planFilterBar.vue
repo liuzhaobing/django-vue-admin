@@ -11,7 +11,7 @@
       <i slot="suffix" class="el-input__icon el-icon-search" @click="handleFilter" />
     </el-autocomplete>
     <el-button type="primary" icon="el-icon-refresh" size="mini" @click="handleFilter">刷新</el-button>
-    <el-button type="primary" icon="el-icon-document-add" size="mini" @click="createPlan">新增任务</el-button>
+    <el-button type="primary" icon="el-icon-document-add" size="mini" @click="createPlan">创建计划</el-button>
   </div>
 </template>
 

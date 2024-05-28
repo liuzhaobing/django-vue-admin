@@ -177,7 +177,7 @@ class TaskViewSet(CommonAViewSet):
         update_task_info(task['job_instance_id'], {'update_by': request.user.id})
         # 2.notify worker to stop
         sequence = {"job_instance_id": task['job_instance_id'], "execute_type": "stop"}
-        publish_task(task['type_name'], json.dumps(sequence, ensure_ascii=False))
+        publish_task(task['type_name_en'], json.dumps(sequence, ensure_ascii=False))
         return Response(task, status=status.HTTP_201_CREATED)
 
     @action(methods=['post'], detail=True, permission_classes=[RbacPermission], perms_map={'post': 'task_continue'},
