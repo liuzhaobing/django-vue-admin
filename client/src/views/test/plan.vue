@@ -2,9 +2,6 @@
   <div class="app-container">
     <plan-filter-bar
       :list-query.sync="listQuery"
-      :group-list="groupList.results"
-      :type-list="typeList.results"
-      :user-list="userList"
       @refresh="getPlanList"
     />
     <plan-show-table
@@ -26,8 +23,7 @@
 import PlanShowTable from '@/views/test/plan/planShowTable.vue'
 import PlanAddDialog from '@/views/test/plan/planAddDialog.vue'
 import Pagination from '@/components/Pagination/index.vue'
-import { planList, groupList, typeList } from '@/api/test'
-import { arrayToMap } from '@/utils/common'
+import { planList } from '@/api/test'
 import PlanFilterBar from '@/views/test/plan/planFilterBar.vue'
 
 export default {
@@ -45,44 +41,10 @@ export default {
       }
     }
   },
-  computed: {
-    groupData() {
-      if (this.groupList.count >= 0) {
-        return arrayToMap(this.groupList.results, 'id', 'name')
-      }
-    },
-    typeData() {
-      if (this.typeList.count >= 0) {
-        return arrayToMap(this.typeList.results, 'id', 'name')
-      }
-    },
-    userList() {
-      return this.$store.state.user.users
-    },
-    userData() {
-      return this.$store.state.user.usersIdName
-    }
-  },
   created() {
-    this.getGroupList()
-    this.getTypeList()
     this.getPlanList()
   },
   methods: {
-    getGroupList() {
-      groupList({ page: 1, page_size: 100 }).then(response => {
-        if (response.data) {
-          this.groupList = response.data
-        }
-      })
-    },
-    getTypeList() {
-      typeList({ page: 1, page_size: 100 }).then(response => {
-        if (response.data) {
-          this.typeList = response.data
-        }
-      })
-    },
     getPlanList() {
       this.listLoading = true
       planList(this.listQuery).then(response => {

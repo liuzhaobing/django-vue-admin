@@ -1,44 +1,9 @@
 <template>
   <div class="filter-container">
-    <el-select
-      v-model="listQuery.group"
-      clearable
-      filterable
-      placeholder="分组搜索"
-      round
-      size="mini"
-      style="width: 150px;"
-      @change="handleFilter"
-    >
-      <el-option v-for="(item, index) in groupList" :key="index" :value="item.id" :label="item.name" />
-    </el-select>
-    <el-select
-      v-model="listQuery.type"
-      clearable
-      placeholder="类型搜索"
-      round
-      size="mini"
-      style="width: 150px;"
-      @change="handleFilter"
-    >
-      <el-option v-for="(item, index) in typeList" :key="index" :value="item.id" :label="item.name" />
-    </el-select>
-    <el-select
-      v-model="listQuery.user"
-      clearable
-      placeholder="创建者搜索"
-      round
-      size="mini"
-      style="width: 150px;"
-      @change="handleFilter"
-    >
-      <el-option v-for="(item, index) in userList" :key="index" :value="item.id" :label="item.name" />
-    </el-select>
     <el-autocomplete
       v-model="listQuery.name"
       :fetch-suggestions="nameFilterAsync"
       placeholder="名称搜索"
-      clearable
       size="mini"
       style="width: 350px;"
       @select="handleFilter"
@@ -77,21 +42,6 @@ export default {
       default: () => {
         return this.$cloneDeep(this.$store.state.common.defaultListQuery)
       }
-    },
-    userList: {
-      required: true,
-      type: Array,
-      default: () => []
-    },
-    typeList: {
-      required: true,
-      type: Array,
-      default: () => []
-    },
-    groupList: {
-      required: true,
-      type: Array,
-      default: () => []
     }
   }
 }
