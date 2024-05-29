@@ -18,6 +18,15 @@
 
 export default {
   name: 'TaskFilterBar',
+  props: {
+    listQuery: {
+      required: true,
+      type: Object,
+      default: () => {
+        return this.$cloneDeep(this.$store.state.common.defaultListQuery)
+      }
+    }
+  },
   data() {
     return {
     }
@@ -26,15 +35,6 @@ export default {
     async nameFilterAsync(queryString, cb) {},
     handleFilter() {
       this.$emit('refresh')
-    }
-  },
-  props: {
-    listQuery: {
-      required: true,
-      type: Object,
-      default: () => {
-        return this.$cloneDeep(this.$store.state.common.defaultListQuery)
-      }
     }
   }
 }
