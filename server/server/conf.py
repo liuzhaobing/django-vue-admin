@@ -1,6 +1,6 @@
 from utils.data import read_yaml_file
 
-DEBUG = True
+DEBUG = False
 config = read_yaml_file("conf/config.yaml")
 DATABASES = config["mysql-roki"]
 REDIS = config["redis-roki"]
