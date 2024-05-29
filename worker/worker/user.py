@@ -5,6 +5,8 @@ import logging
 import threading
 
 import urllib3
+
+import utils.data
 from . import mongo_db
 from .conf import MANAGER
 from .manager import TaskManager, TaskPlan, TaskStatus
@@ -21,15 +23,10 @@ class NLPUser:
     def __init__(self, task: TaskManager, plan: TaskPlan, *args, **kwargs):
         self.task = task
         self.plan = plan
-        self.cases_count = 0
 
     def prepare(self, *args, **kwargs):
         """准备测试用例"""
         self.task.prepare(*args, **kwargs)
-
-        self.cases_count = get_cases_count(self.task.job_instance_id)
-        if self.cases_count != 0:
-            return
 
         self.plan.config = json.loads(self.plan.config) if self.plan.config else {
             "address": "https://speech.myroki.com/dds/v3/test3",
@@ -41,26 +38,34 @@ class NLPUser:
             "file": {"file_name": "/media/2024/05/20/老板电器-思必驰标准测试集-new.xlsx", "sheet_name": "Sheet1"},
         }
 
+        redis_cases_count = get_cases_count(self.task.job_instance_id)
+        self.task.pass_count, self.task.fail_count = int(self.task.pass_count), int(self.task.fail_count)
+        self.task.total_count = int(self.task.total_count)
+
+        if redis_cases_count != 0:
+            return
         if self.plan.data_source["type"] == "xlsx":
             filename = self.plan.data_source["file"]["file_name"].removeprefix("/")
             df = pd.read_excel(io=filename,
                                sheet_name=self.plan.data_source["file"]["sheet_name"])
             for index, line in enumerate(df.values):
-                publish_case(self.task.job_instance_id,
-                             json.dumps(dict(zip(list(df.columns), line)), ensure_ascii=False))
-                self.cases_count = index + 1
+                row = dict(zip(list(df.columns), line))
+                for key, value in row.items():
+                    row[key] = utils.data.process_nan(value)
+                publish_case(self.task.job_instance_id, json.dumps(row, ensure_ascii=False))
+                self.task.total_count = index + 1
 
     def extract_nlp_output(self, msg: dict) -> dict | None:
         """extract key information from output log"""
         try:
             result = {
-                "act_question": msg["dm"]["input"],
-                "act_domain": msg["skill"],
+                "act_question": msg["dm"].get("input", ""),
+                "act_domain": msg.get("skill", ""),
                 "act_intent": msg["dm"].get("intentName", ""),
                 "act_slots": {},
-                "answer_string": msg["dm"]["nlg"],
-                "session_id": msg["sessionId"],
-                "trace_id": msg["recordId"],
+                "answer_string": msg["dm"].get("nlg", ""),
+                "session_id": msg.get("sessionId", ""),
+                "trace_id": msg.get("recordId", ""),
             }
             if "semantics" in msg["nlu"]:
                 result["act_slots"] = {item["name"]: item["value"]
@@ -68,6 +73,7 @@ class NLPUser:
                                        item["name"] != "intent"}
             return result
         except Exception as e:
+            logger.error(f"{e} {msg}")
             return None
 
     def call_interface(self, row: dict):
@@ -93,11 +99,18 @@ class NLPUser:
         )
         end_time = time.perf_counter()
         row["edg_cost"] = round((end_time - start_time) * 1000)
-        logger.info(response.text)
-        result = self.extract_nlp_output(response.json())
-        result["is_intent_pass"] = result["act_intent"] == row.get("intent", "")
-        result["act_slots"] = json.dumps(result["act_slots"], ensure_ascii=False) if result["act_slots"] else ""
-        result["is_slots_pass"] = self.calculate_slots_acc(row.get("slots", ""), result["act_slots"])
+        response_json = {}
+        try:
+            response_json = response.json()
+            logger.info(response.text)
+        except Exception as e:
+            logger.error(f"{e} {response.text}")
+
+        result = self.extract_nlp_output(response_json)
+        result["is_intent_pass"] = result.get("act_intent", "") == row.get("intent", "")
+        result["act_slots"] = json.dumps(result.get("act_slots", {}), ensure_ascii=False) if result.get(
+            "act_slots") else ""
+        result["is_slots_pass"] = self.calculate_slots_acc(row.get("slots", {}), result.get("act_slots", {}))
         result["is_pass"] = result["is_intent_pass"] and result["is_slots_pass"]
         if result["is_pass"]:
             self.task.pass_count += 1
@@ -157,11 +170,11 @@ class NLPUser:
                 if case is None:
                     return None
                 reset_count = get_cases_count(self.task.job_instance_id)
-                progress = f"{self.cases_count - reset_count}/{self.cases_count}"
+                progress = f"{self.task.total_count - reset_count}/{self.task.total_count}"
                 self.task.update_progress(progress)
-                progress_percent = int((self.cases_count - reset_count) * 100 / self.cases_count)
+                progress_percent = int((self.task.total_count - reset_count) * 100 / self.task.total_count)
                 self.task.update_progress_percent(progress_percent)
-                self.task.update_accuracy(self.task.pass_count / (self.cases_count - reset_count))
+                self.task.update_accuracy(self.task.pass_count / (self.task.total_count - reset_count))
 
                 run_one_case(json.loads(case))
 

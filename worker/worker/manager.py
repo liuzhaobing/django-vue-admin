@@ -65,6 +65,7 @@ class TaskInfo(BaseClass):
         self.context: Optional[_context.Context] = None
         self.pass_count = 0
         self.fail_count = 0
+        self.total_count = 0
         super().__init__(**kwargs)
 
 

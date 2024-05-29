@@ -2,6 +2,7 @@
 import base64
 import datetime
 import logging
+import math
 import os
 
 import yaml
@@ -10,6 +11,13 @@ import pandas as pd
 from openpyxl import Workbook
 
 logger = logging.getLogger("log")
+
+
+def process_nan(content):
+    if isinstance(content, float):
+        if math.isnan(content):
+            return ""
+    return content
 
 
 def generate_job_instance_id(tp: str = "LLM"):
