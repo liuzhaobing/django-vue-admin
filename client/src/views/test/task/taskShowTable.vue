@@ -79,8 +79,22 @@
               >
                 <div>
                   <p>选择下载测试结果或者测试用例</p>
-                  <el-button size="mini" type="success" :disabled="!scope.row.result_file" @click="handleMissionDownload(scope.row, 1)">测试结果</el-button>
-                  <el-button size="mini" type="primary" :disabled="!scope.row.case_file" @click="handleMissionDownload(scope.row, 0)">测试用例</el-button>
+                  <el-button
+                    v-show="scope.row.result_file"
+                    size="mini"
+                    type="success"
+                    @click="handleMissionDownload(scope.row, 1)"
+                  >
+                    测试结果
+                  </el-button>
+                  <el-button
+                    v-show="scope.row.case_file"
+                    size="mini"
+                    type="primary"
+                    @click="handleMissionDownload(scope.row, 0)"
+                  >
+                    测试用例
+                  </el-button>
                 </div>
                 <el-button
                   slot="reference"
@@ -147,6 +161,17 @@ import { hasPermission } from '@/permission'
 
 export default {
   name: 'TaskShowTable',
+  props: {
+    loading: {
+      type: Boolean,
+      default: false
+    },
+    data: {
+      required: true,
+      type: Array,
+      default: () => []
+    }
+  },
   methods: {
     hasPermission,
     copy,
@@ -265,17 +290,6 @@ export default {
             message: '已取消'
           })
         })
-    }
-  },
-  props: {
-    loading: {
-      type: Boolean,
-      default: false
-    },
-    data: {
-      required: true,
-      type: Array,
-      default: () => []
     }
   }
 }

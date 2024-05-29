@@ -21,6 +21,15 @@ import { hasPermission } from '@/permission'
 
 export default {
   name: 'PlanFilterBar',
+  props: {
+    listQuery: {
+      required: true,
+      type: Object,
+      default: () => {
+        return this.$cloneDeep(this.$store.state.common.defaultListQuery)
+      }
+    }
+  },
   data() {
     return {
     }
@@ -36,15 +45,6 @@ export default {
       this.$store.commit('test/RESET_PLAN_FORM', null)
       this.$store.commit('test/SET_ACTIVE', 0)
       return this.$store.commit('test/CREATE_PLAN_VISIBLE', true)
-    }
-  },
-  props: {
-    listQuery: {
-      required: true,
-      type: Object,
-      default: () => {
-        return this.$cloneDeep(this.$store.state.common.defaultListQuery)
-      }
     }
   }
 }

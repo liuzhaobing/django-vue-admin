@@ -110,6 +110,17 @@ import { hasPermission } from '@/permission'
 
 export default {
   name: 'PlanShowTable',
+  props: {
+    loading: {
+      type: Boolean,
+      default: false
+    },
+    data: {
+      required: true,
+      type: Array,
+      default: () => []
+    }
+  },
   methods: {
     hasPermission,
     copy,
@@ -173,17 +184,6 @@ export default {
             message: '已取消'
           })
         })
-    }
-  },
-  props: {
-    loading: {
-      type: Boolean,
-      default: false
-    },
-    data: {
-      required: true,
-      type: Array,
-      default: () => []
     }
   }
 }

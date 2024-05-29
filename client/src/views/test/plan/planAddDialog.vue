@@ -55,7 +55,7 @@ export default {
   data() {
     return {
       step: 3,
-      rules: {},
+      rules: {}
     }
   },
   computed: {
@@ -77,7 +77,7 @@ export default {
     },
     next() {
       this.active++
-    },
+    }
   }
 }
 
