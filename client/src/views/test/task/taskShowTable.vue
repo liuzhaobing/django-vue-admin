@@ -8,7 +8,7 @@
         border
         fit
         width="100%"
-        height="calc(100vh - 180px)"
+        height="calc(100vh - 130px)"
         row-key="id"
         :highlight-current-row="true"
         :row-style="{height: '50px'}"
@@ -69,7 +69,7 @@
             <span>{{ scope.row.end_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作" width="100">
+        <el-table-column align="center" label="操作" width="170">
           <template slot-scope="scope">
             <el-row>
               <el-popover
@@ -89,6 +89,21 @@
                 />
               </el-popover>
               <el-tooltip
+                v-show="hasPermission(['task_continue'])"
+                popper-class="cell-popover"
+                trigger="hover"
+                placement="top"
+                content="重启任务"
+              >
+                <el-button
+                  type="text"
+                  icon="el-icon-s-promotion"
+                  style="margin-left: 8px"
+                  @click="rerunTask(scope.row)"
+                />
+              </el-tooltip>
+              <el-tooltip
+                v-show="hasPermission(['task_stop'])"
                 popper-class="cell-popover"
                 trigger="hover"
                 placement="top"
@@ -103,6 +118,7 @@
                 />
               </el-tooltip>
               <el-tooltip
+                v-show="hasPermission(['task_delete'])"
                 popper-class="cell-popover"
                 trigger="hover"
                 placement="top"
@@ -127,10 +143,12 @@
 import { copy } from '@/utils/common'
 import { taskDelete, taskDeletion, taskContinue, taskStop } from '@/api/test'
 import { Message } from 'element-ui'
+import { hasPermission } from '@/permission'
 
 export default {
   name: 'TaskShowTable',
   methods: {
+    hasPermission,
     copy,
     showProgressPercentColor(percent) {
       const candidateColors = [
@@ -152,7 +170,7 @@ export default {
       this.$confirm('确认停止?', '警告', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        type: 'error'
+        type: 'warning'
       })
         .then(async() => {
           const response = await taskStop(row.job_instance_id)
@@ -172,18 +190,18 @@ export default {
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消停止任务'
+            message: '已取消'
           })
         })
     },
-    continueTask(row) {
+    rerunTask(row) {
       this.$confirm('确认继续?', '警告', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        type: 'error'
+        type: 'warning'
       })
         .then(async() => {
-          const response = await taskContinue(row.id)
+          const response = await taskContinue(row.job_instance_id)
           if (response.code === 200) {
             this.$message({
               type: 'success',
@@ -196,6 +214,12 @@ export default {
               message: response.msg
             })
           }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
         })
     },
     handleMissionDownload(row, type) {
@@ -213,7 +237,7 @@ export default {
       this.$confirm(`确认删除 ⌜${row.name}⌟ ？`, '警告', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        type: 'error'
+        type: 'warning'
       })
         .then(async() => {
           let response
@@ -238,7 +262,7 @@ export default {
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消删除'
+            message: '已取消'
           })
         })
     }

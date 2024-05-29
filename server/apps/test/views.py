@@ -145,11 +145,16 @@ class TaskViewSet(CommonAViewSet):
     def _running(self, request):
         """查询运行中的任务"""
         tasks = list_tasks(dict(request.query_params), STATUS.RUNNING)
+        sorted_data = sorted(
+            tasks,
+            key=lambda x: datetime.strptime(x['start_time'], '%Y-%m-%d %H:%M:%S'),
+            reverse=True,
+        )
         response_data = {
             'count': len(tasks),
             'previous': None,
             'next': None,
-            'results': tasks
+            'results': sorted_data
         }
         return Response(data=response_data, status=status.HTTP_200_OK)
 

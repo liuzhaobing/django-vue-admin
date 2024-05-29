@@ -8,7 +8,7 @@
         border
         fit
         width="100%"
-        height="calc(100vh - 180px)"
+        height="calc(100vh - 130px)"
         row-key="id"
         :highlight-current-row="true"
         :row-style="{height: '50px'}"
@@ -53,6 +53,7 @@
           <template slot-scope="scope">
             <el-row>
               <el-tooltip
+                v-show="hasPermission(['plan_update'])"
                 popper-class="cell-popover"
                 trigger="hover"
                 placement="top"
@@ -67,6 +68,7 @@
                 />
               </el-tooltip>
               <el-tooltip
+                v-show="hasPermission(['task_publish'])"
                 popper-class="cell-popover"
                 trigger="hover"
                 placement="top"
@@ -80,6 +82,7 @@
                 />
               </el-tooltip>
               <el-tooltip
+                v-show="hasPermission(['plan_delete'])"
                 popper-class="cell-popover"
                 trigger="hover"
                 placement="top"
@@ -103,16 +106,18 @@
 <script>
 import { copy } from '@/utils/common'
 import { planDelete, taskPublish } from '@/api/test'
+import { hasPermission } from '@/permission'
 
 export default {
   name: 'PlanShowTable',
   methods: {
+    hasPermission,
     copy,
     deletePlan(row) {
       this.$confirm(`确认删除 ⌜${row.name}⌟ ？`, '警告', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        type: 'error'
+        type: 'warning'
       })
         .then(async() => {
           const response = await planDelete(row.id)
@@ -132,7 +137,7 @@ export default {
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消删除'
+            message: '已取消'
           })
         })
     },
@@ -146,7 +151,7 @@ export default {
       this.$confirm('确认执行?', '警告', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        type: 'error'
+        type: 'warning'
       })
         .then(async() => {
           const response = await taskPublish(row.id)
@@ -165,10 +170,10 @@ export default {
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消删除'
+            message: '已取消'
           })
         })
-    },
+    }
   },
   props: {
     loading: {

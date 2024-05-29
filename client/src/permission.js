@@ -71,3 +71,7 @@ router.afterEach(() => {
   // finish progress bar
   NProgress.done()
 })
+
+export function hasPermission(perms) {
+  return store.getters.perms.some(perm => ['admin', ...perms].includes(perm))
+}

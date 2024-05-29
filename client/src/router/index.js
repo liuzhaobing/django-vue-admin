@@ -215,12 +215,6 @@ export const asyncRoutes = [
     meta: { title: '系统管理', icon: 'example', perms: ['system_manage'] },
     children: [
       {
-        path: 'user',
-        name: 'User',
-        component: () => import('@/views/system/user.vue'),
-        meta: { title: '用户管理', icon: 'user', perms: ['user_manage'] }
-      },
-      {
         path: 'organization',
         name: 'Organization',
         component: () => import('@/views/system/organization'),
@@ -233,8 +227,14 @@ export const asyncRoutes = [
         meta: { title: '角色管理', icon: 'lock', perms: ['role_manage'] }
       },
       {
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/system/user.vue'),
+        meta: { title: '用户管理', icon: 'user', perms: ['user_manage'] }
+      },
+      {
         path: 'position',
-        name: 'Postion',
+        name: 'Position',
         component: () => import('@/views/system/position'),
         meta: { title: '岗位管理', icon: 'position', perms: ['position_manage'] }
       },
